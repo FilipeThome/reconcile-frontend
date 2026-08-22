@@ -1,0 +1,11 @@
+node_modules
+dist
+ui-samples
+.git
+.idea
+*.md
+.env
+.env.*
+src/**/*.test.ts
+src/**/*.test.tsx
+src/test
