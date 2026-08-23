@@ -6,6 +6,7 @@ import {
   GitCompare,
   LayoutDashboard,
   Link2,
+  LogOut,
   Receipt,
   Scale,
   Settings,
@@ -15,9 +16,10 @@ import {
   Undo2,
   Wallet,
 } from 'lucide-react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAppState } from '../context/AppState'
-import { currentUser, tenant } from '../data/mock'
+import { useAuth } from '../context/AuthContext'
+import { displayRole } from '../lib/format'
 
 const groups = [
   {
@@ -58,8 +60,13 @@ const groups = [
 ]
 
 export function Layout() {
-  const { toast } = useAppState()
-  const roleLabel = currentUser.role === 'admin' ? 'Administrador' : currentUser.role
+  const { session, logout } = useAuth()
+  const { settings } = useAppState()
+  const navigate = useNavigate()
+  const name = session?.name ?? settings?.currentUser?.name ?? '—'
+  const roleLabel = displayRole(session?.role ?? settings?.currentUser?.role ?? '')
+  const tenantName = settings?.tenant.name ?? '—'
+  const tenantId = session?.tenantId ?? settings?.tenant.id ?? '—'
 
   return (
     <div className="app-shell">
@@ -88,18 +95,28 @@ export function Layout() {
         ))}
         <div className="sidebar-foot">
           <div className="tenant">
-            <strong>{tenant.name}</strong>
-            <span>Tenant {tenant.id}</span>
+            <strong>{tenantName}</strong>
+            <span>Tenant {tenantId}</span>
             <span>
-              {currentUser.name} · {roleLabel}
+              {name} · {roleLabel}
             </span>
+            <button
+              type="button"
+              className="btn"
+              style={{ marginTop: 10, width: '100%' }}
+              onClick={() => {
+                logout()
+                navigate('/login')
+              }}
+            >
+              <LogOut size={14} /> Sair
+            </button>
           </div>
         </div>
       </aside>
       <main className="main">
         <Outlet />
       </main>
-      {toast && <div className="toast">{toast}</div>}
     </div>
   )
 }

@@ -18,6 +18,14 @@ export function formatDateTime(iso: string) {
   })
 }
 
+export function displayRole(role: string) {
+  const normalized = role.toLowerCase()
+  if (normalized === 'admin') return 'Administrador'
+  if (normalized === 'operador') return 'Operador'
+  if (normalized === 'contador') return 'Contador'
+  return role
+}
+
 export function formatPct(value: number) {
   const sign = value > 0 ? '+' : ''
   return `${sign}${value.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`

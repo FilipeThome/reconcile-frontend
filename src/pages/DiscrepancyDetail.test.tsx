@@ -43,6 +43,6 @@ describe('DiscrepancyDetail', () => {
 
   it('shows a fallback for unknown cases', () => {
     renderDetail('DIV-nao-existe')
-    expect(screen.getByText('Caso não encontrado neste protótipo.')).toBeInTheDocument()
+    expect(screen.getByText('Caso não encontrado.')).toBeInTheDocument()
   })
 })

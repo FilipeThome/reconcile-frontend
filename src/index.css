@@ -142,8 +142,67 @@ button { cursor: pointer; }
   font-size: 13px;
 }
 .chip { color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.chip-button { cursor: pointer; }
+.chip-button:hover { border-color: #c7d2e3; color: var(--text); }
+.chip-count {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 99px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 5px;
+}
 .btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
 .btn:hover { border-color: #c7d2e3; }
+.btn-active { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+.filter-anchor { position: relative; }
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  z-index: 15;
+}
+.filter-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 360px;
+  z-index: 16;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.filter-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); font-weight: 600; }
+.filter-field .field, .filter-field .select { min-width: 0; width: 100%; }
+.filter-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.error-boundary {
+  max-width: 480px;
+  margin: 48px auto;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.error-boundary h1 { margin: 0 0 8px; }
+.login-page {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.login-card { width: min(420px, 100%); }
+.login-card h1 { margin: 0 0 6px; }
+.login-card .stack-fields { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
 .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
 .btn-primary:hover { filter: brightness(1.05); }
 .btn-danger { background: #fff; color: var(--danger); border-color: #f3c4c4; }
