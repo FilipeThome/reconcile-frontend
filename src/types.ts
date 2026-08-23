@@ -1,5 +1,5 @@
-export type Marketplace = 'Mercado Livre' | 'CSV'
-export type Gateway = 'Mercado Pago' | 'CSV'
+export type Marketplace = 'Mercado Livre' | 'CSV' | 'Shopee'
+export type Gateway = 'Mercado Pago' | 'CSV' | 'Shopee'
 
 export type ReconciliationStatus =
   | 'reconciliado'
@@ -177,6 +177,8 @@ export type Closing = {
   refunds: number
   openDiff: number
   pendingInvoices: number
+  deltas?: ClosingDelta[]
+  causes?: { cause: string; value: number; pct: number }[]
 }
 
 export type Integration = {
@@ -200,4 +202,66 @@ export type UserAccount = {
   name: string
   email: string
   role: 'admin' | 'operador' | 'contador'
+}
+
+export type Filters = {
+  from: string
+  to: string
+  marketplace: '' | Marketplace
+  gateway: '' | Gateway
+}
+
+export type DashboardKpis = {
+  gross: number
+  expected: number
+  received: number
+  divergence: number
+  confirmedLoss: number
+  recoverable: number
+  pendingSettlement: number
+  pendingInvoices: number
+  orders: number
+  avgTicket: number
+  itemsSold: number
+  reconciledPct: number
+  divergentPct: number
+  pendingPct: number
+  vsGross: number
+  vsExpected: number
+  vsReceived: number
+  vsDivergence: number
+  vsLoss: number
+}
+
+export type DashboardData = {
+  kpis: DashboardKpis
+  dailySeries: { day: string; esperado: number; recebido: number; divergencia: number }[]
+  causes: { cause: string; value: number; pct: number }[]
+  periodLabel: string
+  recoverable: number
+  confirmedLoss: number
+  actionQueue: { id: string; cause: string; description: string; amount: number; status: CaseStatus; priority: Priority }[]
+  upcomingPayouts: { id: string; netAmount: number; status: string; date?: string; gateway?: string }[]
+}
+
+export type ClosingDelta = {
+  reason: string
+  amount: number
+  createdAt: string
+}
+
+export type WorkspaceSettings = {
+  tenant: { id: string; name: string; sellerId: string }
+  currentUser?: UserAccount
+  users: UserAccount[]
+  tolerances: { cents: number; dateDays: number; settlementDeadlineDays: number; rawEventRetentionDays: number }
+}
+
+export type EngineOverview = {
+  version: string
+  calculations: number
+  layers: string[]
+  components: { label: string; amount: number; pct: number }[]
+  example?: CalculationSnapshot | null
+  tolerances?: { cents: number; dateDays: number; settlementDeadlineDays: number }
 }

@@ -31,7 +31,7 @@ describe('DataTable', () => {
         columns={[{ key: 'id', header: 'ID', render: (row) => row.id }]}
       />,
     )
-    expect(screen.getByText('Nenhum registro neste recorte do protótipo.')).toBeInTheDocument()
+    expect(screen.getByText('Nenhum registro neste recorte.')).toBeInTheDocument()
 
     rerender(
       <DataTable

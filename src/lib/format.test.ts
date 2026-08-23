@@ -8,6 +8,7 @@ import {
   formatDate,
   formatDateTime,
   formatPct,
+  displayRole,
   invoiceLabel,
   reconLabel,
 } from './format'
@@ -48,6 +49,10 @@ describe('domain labels', () => {
     expect(closingLabel('closed')).toBe('Fechado')
     expect(invoiceLabel('autorizada')).toBe('Autorizada')
     expect(causeLabel('repasse_nao_realizado')).toBe('Repasse não realizado')
+    expect(displayRole('ADMIN')).toBe('Administrador')
+    expect(displayRole('operador')).toBe('Operador')
+    expect(displayRole('contador')).toBe('Contador')
+    expect(displayRole('outro')).toBe('outro')
   })
 })
 

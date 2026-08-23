@@ -1,26 +1,39 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QueryStatus } from '../api/hooks'
 import { DataTable } from '../components/DataTable'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
-import { kpis, orders } from '../data/mock'
+import { useAppState } from '../context/AppState'
+import { useFilters } from '../context/FilterContext'
+import { orderMatches } from '../lib/filters'
 import { downloadCsv, formatBRL, formatDateTime } from '../lib/format'
 import type { Order } from '../types'
 
 export function Orders() {
   const navigate = useNavigate()
+  const { filters } = useFilters()
+  const { error, loading, orders, payments } = useAppState()
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('todos')
 
+  const scoped = useMemo(() => {
+    const paymentByOrder = new Map(payments.map((item) => [item.orderId, item]))
+    return orders.filter((order) => orderMatches(order, filters, paymentByOrder.get(order.id)))
+  }, [filters, orders, payments])
+
   const rows = useMemo(
     () =>
-      orders.filter((order) => {
+      scoped.filter((order) => {
         const matchQuery = `${order.id} ${order.buyer}`.toLowerCase().includes(query.toLowerCase())
         const matchStatus = status === 'todos' || order.reconciliation === status
         return matchQuery && matchStatus
       }),
-    [query, status],
+    [query, scoped, status],
   )
+
+  const gross = rows.reduce((sum, item) => sum + item.grossAmount, 0)
+  const items = rows.reduce((sum, item) => sum + item.items, 0)
 
   return (
     <section>
@@ -31,33 +44,27 @@ export function Orders() {
           onClick={() =>
             downloadCsv('pedidos.csv', [
               ['id', 'data', 'comprador', 'marketplace', 'bruto', 'status'],
-              ...rows.map((order) => [
-                order.id,
-                order.date,
-                order.buyer,
-                order.marketplace,
-                String(order.grossAmount),
-                order.reconciliation,
-              ]),
+              ...rows.map((order) => [order.id, order.date, order.buyer, order.marketplace, String(order.grossAmount), order.reconciliation]),
             ])
           }
         >
           Exportar CSV
         </button>
       </PageHeader>
+      <QueryStatus loading={loading} error={error} />
 
       <div className="summary-bar">
         <span>
-          Pedidos <strong>{kpis.orders.toLocaleString('pt-BR')}</strong>
+          Pedidos <strong>{rows.length.toLocaleString('pt-BR')}</strong>
         </span>
         <span>
-          Vendas brutas <strong>{formatBRL(kpis.gross)}</strong>
+          Vendas brutas <strong>{formatBRL(gross)}</strong>
         </span>
         <span>
-          Ticket médio <strong>{formatBRL(kpis.avgTicket)}</strong>
+          Ticket médio <strong>{formatBRL(rows.length ? gross / rows.length : 0)}</strong>
         </span>
         <span>
-          Itens <strong>{kpis.itemsSold.toLocaleString('pt-BR')}</strong>
+          Itens <strong>{items.toLocaleString('pt-BR')}</strong>
         </span>
       </div>
 

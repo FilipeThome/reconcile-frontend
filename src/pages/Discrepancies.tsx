@@ -1,32 +1,43 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QueryStatus } from '../api/hooks'
 import { DataTable } from '../components/DataTable'
 import { KpiCard } from '../components/KpiCard'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
+import { useFilters } from '../context/FilterContext'
+import { caseMatches, caseSearchText } from '../lib/filters'
 import { downloadCsv, formatBRL, formatDateTime, causeLabel } from '../lib/format'
 import type { CaseStatus, ReconciliationCase } from '../types'
 
 export function Discrepancies() {
   const navigate = useNavigate()
-  const { cases } = useAppState()
+  const { cases, error, loading, orders, payments } = useAppState()
+  const { filters } = useFilters()
   const [tab, setTab] = useState<'todas' | CaseStatus>('todas')
   const [query, setQuery] = useState('')
 
-  const filtered = useMemo(
-    () =>
-      cases.filter((item) => {
-        const matchTab = tab === 'todas' || item.status === tab
-        const matchQuery = `${item.id} ${item.orderId} ${item.description}`.toLowerCase().includes(query.toLowerCase())
-        return matchTab && matchQuery
-      }),
-    [cases, query, tab],
+  const scoped = useMemo(
+    () => cases.filter((item) => caseMatches(item, filters, orders, payments)),
+    [cases, filters, orders, payments],
   )
 
-  const openAmount = cases.filter((item) => item.status !== 'resolvida' && item.status !== 'ignorada').reduce((sum, item) => sum + item.amount, 0)
-  const recoverable = cases.reduce((sum, item) => sum + item.recoverable, 0)
-  const loss = cases.reduce((sum, item) => sum + item.confirmedLoss, 0)
+  const filtered = useMemo(
+    () =>
+      scoped.filter((item) => {
+        const matchTab = tab === 'todas' || item.status === tab
+        const matchQuery = caseSearchText(item).includes(query.toLowerCase())
+        return matchTab && matchQuery
+      }),
+    [query, scoped, tab],
+  )
+
+  const openAmount = filtered
+    .filter((item) => item.status !== 'resolvida' && item.status !== 'ignorada')
+    .reduce((sum, item) => sum + item.amount, 0)
+  const recoverable = filtered.reduce((sum, item) => sum + item.recoverable, 0)
+  const loss = filtered.reduce((sum, item) => sum + item.confirmedLoss, 0)
 
   return (
     <section>
@@ -44,6 +55,7 @@ export function Discrepancies() {
           Exportar CSV
         </button>
       </PageHeader>
+      <QueryStatus loading={loading} error={error} />
 
       <div className="grid-4" style={{ marginBottom: 16 }}>
         <KpiCard label="Casos no recorte" value={String(filtered.length)} />

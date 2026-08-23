@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from './client'
 
-export function useApi<T>(path: string | null) {
+export function useApi<T>(path: string | null, refreshKey = 0) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(Boolean(path))
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +31,7 @@ export function useApi<T>(path: string | null) {
     return () => {
       live = false
     }
-  }, [path, tick])
+  }, [path, tick, refreshKey])
 
   return {
     data,

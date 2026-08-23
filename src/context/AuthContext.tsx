@@ -1,5 +1,5 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { api, clearSession, loadSession, saveSession, type Session } from '../api/client'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { api, clearSession, loadSession, saveSession, SESSION_EXPIRED_EVENT, type Session } from '../api/client'
 
 type AuthValue = {
   session: Session | null
@@ -16,7 +16,15 @@ export function AuthProvider({
   children: ReactNode
   initialSession?: Session | null
 }) {
-  const [session, setSession] = useState<Session | null>(() => initialSession ?? loadSession())
+  const [session, setSession] = useState<Session | null>(() =>
+    initialSession === undefined ? loadSession() : initialSession,
+  )
+
+  useEffect(() => {
+    const onExpired = () => setSession(null)
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired)
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired)
+  }, [])
 
   const value = useMemo<AuthValue>(
     () => ({
