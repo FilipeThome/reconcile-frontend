@@ -107,6 +107,29 @@ describe('api', () => {
     await expect(api('/plain')).rejects.toMatchObject({ message: 'falhou' })
   })
 
+  it('keeps login 401 as the backend message', async () => {
+    saveSession(testSession)
+    const expired = vi.fn()
+    window.addEventListener(SESSION_EXPIRED_EVENT, expired)
+    const fetchMock = vi.fn(() =>
+      Promise.resolve(
+        new Response(JSON.stringify({ code: 'UNAUTHORIZED', message: 'Credenciais inválidas' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    await expect(api('/auth/login', { method: 'POST', body: '{}' })).rejects.toMatchObject({
+      message: 'Credenciais inválidas',
+    })
+    const headers = fetchMock.mock.calls[0]?.[1]?.headers as Headers
+    expect(headers.get('Authorization')).toBeNull()
+    expect(expired).not.toHaveBeenCalled()
+    expect(loadSession()).toEqual(testSession)
+    window.removeEventListener(SESSION_EXPIRED_EVENT, expired)
+  })
+
   it('sends auth headers when a session exists', async () => {
     saveSession(testSession)
     const fetchMock = vi.fn(() =>
