@@ -20,7 +20,7 @@ export function Integrations() {
             </div>
             <p className="muted">{item.detail}</p>
             <p className="muted">Última sync: {item.lastSync ? formatDateTime(item.lastSync) : 'nunca'}</p>
-            <div className="row-actions" style={{ marginTop: 12 }}>
+            <div className="row-actions mt-12">
               <button type="button" className="btn-primary btn" onClick={() => toggleIntegration(item.id)}>
                 {item.status === 'ativa' ? 'Desconectar' : 'Conectar'}
               </button>

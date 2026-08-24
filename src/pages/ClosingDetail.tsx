@@ -67,11 +67,11 @@ export function ClosingDetail() {
           <p>Tarifas e comissões: {formatBRL(item.fees)}</p>
           <p>Estornos: {formatBRL(item.refunds)}</p>
           <p>Fechado em: {item.closedAt ? formatDateTime(item.closedAt) : 'ainda aberto'}</p>
-          <div className="alert info" style={{ marginTop: 12 }}>
+          <div className="alert info mt-12">
             Após CLOSED, um payout tardio não altera silenciosamente este período. Ele gera ajuste/delta e, se necessário, reabertura explícita.
           </div>
           {deltas.length > 0 && (
-            <div style={{ marginTop: 12 }}>
+            <div className="mt-12">
               <h3>Deltas tardios</h3>
               {deltas.map((delta) => (
                 <p key={`${delta.createdAt}-${delta.reason}`}>

@@ -32,7 +32,7 @@ export function Fiscal() {
         subtitle="Adapter de provedor. Sem motor tributário próprio. Campos CBS/IBS já visíveis no modelo."
       />
       <QueryStatus loading={loading} error={error} />
-      <div className="grid-4" style={{ marginBottom: 16 }}>
+      <div className="grid-4 mb-16">
         <KpiCard label="Documentos no recorte" value={String(documents.length)} />
         <KpiCard label="Autorizadas" value={String(documents.filter((item) => item.status === 'autorizada').length)} />
         <KpiCard label="Pedidos sem nota" value={String(pendingOrders.length)} tone="warning" />
@@ -57,7 +57,7 @@ export function Fiscal() {
           ]}
         />
       </article>
-      <article className="card" style={{ marginTop: 12 }}>
+      <article className="card mt-12">
         <h2>Pendências fiscais</h2>
         {pendingOrders.map((id) => (
           <p key={id}>

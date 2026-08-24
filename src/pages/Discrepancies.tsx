@@ -57,7 +57,7 @@ export function Discrepancies() {
       </PageHeader>
       <QueryStatus loading={loading} error={error} />
 
-      <div className="grid-4" style={{ marginBottom: 16 }}>
+      <div className="grid-4 mb-16">
         <KpiCard label="Casos no recorte" value={String(filtered.length)} />
         <KpiCard label="Valor em aberto" value={formatBRL(openAmount)} tone="warning" />
         <KpiCard label="Recuperável" value={formatBRL(recoverable)} />

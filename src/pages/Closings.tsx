@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { BarFill } from '../components/BarFill'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
@@ -24,7 +25,7 @@ export function Closings() {
               <p>Recebido {formatBRL(item.received)}</p>
               <p>Diferença aberta {formatBRL(item.openDiff)}</p>
               <div className="progress">
-                <span style={{ width: `${pct}%` }} />
+                <BarFill pct={pct} />
               </div>
             </article>
           )

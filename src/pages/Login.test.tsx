@@ -17,17 +17,28 @@ function renderLogin(session = null as typeof testSession | null) {
   )
 }
 
+async function fillCredentials(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(screen.getByLabelText('E-mail'), 'ana.dantas@lojaexemplo.com.br')
+  await user.type(screen.getByLabelText('Senha'), 'senha123')
+}
+
 describe('Login', () => {
   it('redirects when a session already exists', () => {
     renderLogin(testSession)
     expect(screen.queryByRole('heading', { name: 'Entrar no Reconcile' })).not.toBeInTheDocument()
   })
 
+  it('does not embed demo credentials in the page', () => {
+    const { container } = renderLogin()
+    expect(container.textContent).not.toMatch(/senha123/)
+    expect(container.textContent).not.toMatch(/ana\.dantas@lojaexemplo\.com\.br/)
+    expect(screen.getByLabelText('E-mail')).toHaveValue('')
+    expect(screen.getByLabelText('Senha')).toHaveValue('')
+  })
+
   it('rejects blank credentials', async () => {
     const user = userEvent.setup()
     renderLogin()
-    await user.clear(screen.getByLabelText('E-mail'))
-    await user.clear(screen.getByLabelText('Senha'))
     await user.click(screen.getByRole('button', { name: 'Entrar' }))
     expect(screen.getByText('Informe e-mail e senha.')).toBeInTheDocument()
   })
@@ -35,6 +46,7 @@ describe('Login', () => {
   it('submits a successful login', async () => {
     const user = userEvent.setup()
     renderLogin()
+    await fillCredentials(user)
     await user.click(screen.getByRole('button', { name: 'Entrar' }))
     await waitFor(() => expect(screen.queryByRole('heading', { name: 'Entrar no Reconcile' })).not.toBeInTheDocument())
   })
@@ -52,6 +64,7 @@ describe('Login', () => {
         ),
     )
     renderLogin()
+    await fillCredentials(user)
     await user.click(screen.getByRole('button', { name: 'Entrar' }))
     await waitFor(() => expect(screen.getByText('Credenciais inválidas')).toBeInTheDocument())
     vi.stubGlobal('fetch', mockFetch)
