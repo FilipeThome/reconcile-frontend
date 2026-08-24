@@ -53,7 +53,7 @@ describe('Login', () => {
     )
     renderLogin()
     await user.click(screen.getByRole('button', { name: 'Entrar' }))
-    await waitFor(() => expect(screen.getByText(/Sessão expirada|Credenciais inválidas/)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('Credenciais inválidas')).toBeInTheDocument())
     vi.stubGlobal('fetch', mockFetch)
   })
 })
