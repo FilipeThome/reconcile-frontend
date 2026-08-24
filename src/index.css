@@ -366,7 +366,17 @@ tr.clickable:hover { background: #f8fafc; }
 .bars { display: flex; flex-direction: column; gap: 10px; }
 .bar-row { display: grid; grid-template-columns: 180px 1fr 90px; gap: 10px; align-items: center; font-size: 13px; }
 .bar-track { background: #eef2f6; height: 8px; border-radius: 99px; overflow: hidden; }
-.bar-fill { height: 100%; background: var(--primary); border-radius: 99px; }
+.bar-fill-svg { display: block; width: 100%; height: 8px; }
+.bar-fill-svg rect { fill: var(--primary); }
+.progress .bar-fill-svg rect { fill: #22c55e; }
+
+.mt-10 { margin-top: 10px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
+.w-full { width: 100%; }
+.text-center { text-align: center; }
+.cell-wrap { white-space: normal; max-width: 480px; }
 
 .compare {
   display: grid;
@@ -417,7 +427,6 @@ tr.clickable:hover { background: #f8fafc; }
   overflow: hidden;
   margin-top: 10px;
 }
-.progress > span { display: block; height: 100%; background: #22c55e; }
 
 .switch {
   width: 40px;

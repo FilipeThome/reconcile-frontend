@@ -39,7 +39,7 @@ export function Settings() {
           <p>Retenção de raw events: {tolerances.rawEventRetentionDays} dias</p>
         </article>
       </div>
-      <article className="card" style={{ marginTop: 12 }}>
+      <article className="card mt-12">
         <h2>Usuários e papéis</h2>
         <table>
           <thead>

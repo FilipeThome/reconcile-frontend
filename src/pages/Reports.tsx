@@ -49,7 +49,7 @@ export function Reports() {
             <article className="report-card" key={item.id}>
               <h3>{item.title}</h3>
               <p className="muted">{item.desc}</p>
-              <button type="button" className="btn-primary btn" style={{ marginTop: 12 }} onClick={() => void generate(item)}>
+              <button type="button" className="btn-primary btn mt-12" onClick={() => void generate(item)}>
                 Gerar
               </button>
             </article>

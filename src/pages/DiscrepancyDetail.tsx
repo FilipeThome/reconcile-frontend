@@ -77,7 +77,7 @@ export function DiscrepancyDetail() {
         </article>
       </div>
 
-      <article className="card" style={{ marginTop: 12 }}>
+      <article className="card mt-12">
         <div className="tabs">
           {['resumo', 'calculo', 'timeline', 'comentarios'].map((name) => (
             <button key={name} type="button" className={`tab${tab === name ? ' active' : ''}`} onClick={() => setTab(name)}>
@@ -99,10 +99,10 @@ export function DiscrepancyDetail() {
                 <div className="diff">Diferença {formatBRL(snapshot?.difference ?? item.amount)}</div>
               </div>
             </div>
-            <div className="alert danger" style={{ marginTop: 12 }}>
+            <div className="alert danger mt-12">
               Análise do motor: {item.description}
             </div>
-            <p style={{ marginTop: 12 }}>
+            <p className="mt-12">
               <strong>Ação sugerida:</strong> {item.suggestedAction}
             </p>
             <ul className="list-plain">
@@ -163,7 +163,7 @@ export function DiscrepancyDetail() {
                 <p>{comment.text}</p>
               </div>
             ))}
-            <div className="toolbar" style={{ marginTop: 16 }}>
+            <div className="toolbar mt-16">
               <input className="field" placeholder="Adicionar comentário interno" value={text} onChange={(e) => setText(e.target.value)} />
               <button
                 type="button"
