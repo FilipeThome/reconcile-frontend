@@ -188,6 +188,7 @@ export type Integration = {
   status: 'ativa' | 'disponivel' | 'erro'
   lastSync: string | null
   detail: string
+  oauth?: boolean
 }
 
 export type ReconciliationRule = {

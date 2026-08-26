@@ -1,11 +1,23 @@
 import type { Filters, Marketplace, Order, Payment, ReconciliationCase } from '../types'
 import { causeLabel } from './format'
 
+function utcIso(date: Date) {
+  return date.toISOString().slice(0, 10)
+}
+
+function daysAgoUtc(days: number) {
+  const date = new Date()
+  date.setUTCDate(date.getUTCDate() - days)
+  return utcIso(date)
+}
+
 export const PERIOD_PRESETS = [
-  { id: '2026-04', label: 'Abril/2026', from: '2026-04-01', to: '2026-04-30' },
-  { id: '2026-05', label: 'Maio/2026', from: '2026-05-01', to: '2026-05-31' },
+  { id: '90d', label: 'Últimos 90 dias', from: daysAgoUtc(90), to: utcIso(new Date()) },
+  { id: '2026-08', label: 'Agosto/2026', from: '2026-08-01', to: '2026-08-31' },
   { id: '2026-06', label: 'Junho/2026', from: '2026-06-01', to: '2026-06-30' },
-] as const
+  { id: '2026-05', label: 'Maio/2026', from: '2026-05-01', to: '2026-05-31' },
+  { id: '2026-04', label: 'Abril/2026', from: '2026-04-01', to: '2026-04-30' },
+]
 
 export const DEFAULT_FILTERS: Filters = {
   from: '2026-05-01',
