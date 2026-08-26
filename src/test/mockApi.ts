@@ -110,7 +110,10 @@ export async function mockFetch(input: RequestInfo | URL, init?: RequestInit): P
     if (closingMatch[2] === '/close' && method === 'POST') return empty()
   }
   if (path === '/integrations' && method === 'GET') return json(initialIntegrations)
-  if (/^\/integrations\/[^/]+\/(connect|disconnect|backfill)$/.test(path) && method === 'POST') return empty()
+  if (/^\/integrations\/[^/]+\/backfill$/.test(path) && method === 'POST') {
+    return json({ id: 'ml', status: 'done', orders: 0, payments: 0, fees: 0, refunds: 0, invoices: 0 })
+  }
+  if (/^\/integrations\/[^/]+\/(connect|disconnect)$/.test(path) && method === 'POST') return empty()
   if (path === '/rules' && method === 'GET') return json(initialRules)
   if (/^\/rules\/[^/]+$/.test(path) && method === 'PATCH') return empty()
   if (path === '/settings') {

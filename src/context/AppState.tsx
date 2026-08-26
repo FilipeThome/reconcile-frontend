@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api, loadSession } from '../api/client'
+import { asCount, isSafeIntegrationId, isTrustedAuthorizationUrl } from '../lib/oauth'
 import type {
   CalculationSnapshot,
   CaseStatus,
@@ -71,7 +72,7 @@ type AppStateValue = {
   toggleIntegration: (id: string) => void
   toggleRule: (id: string) => void
   reprocessCase: (id: string) => void
-  backfillIntegration: (id: string) => void
+  backfillIntegration: (id: string) => Promise<void>
   showToast: (message: string) => void
 }
 
@@ -84,12 +85,12 @@ const statusToast: Record<CaseStatus, string> = {
   ignorada: 'ignorado',
 }
 
-function run(task: () => Promise<void>, fallback: () => void, onError: (message: string) => void) {
+function run(task: () => Promise<void>, fallback: () => void, onError: (message: string) => void): Promise<void> {
   if (!loadSession()) {
     fallback()
-    return
+    return Promise.resolve()
   }
-  void task().catch((err: Error) => onError(err.message))
+  return task().catch((err: Error) => onError(err.message))
 }
 
 export function AppStateProvider({ children, seed }: { children: ReactNode; seed?: AppSeed }) {
@@ -206,11 +207,22 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
 
   const toggleIntegration = useCallback(
     (id: string) => {
+      if (!isSafeIntegrationId(id)) return
       run(
         async () => {
           const current = integrationsRef.current.find((item) => item.id === id)
           const next = current?.status === 'ativa' ? 'disponivel' : 'ativa'
-          await api(`/integrations/${id}/${next === 'ativa' ? 'connect' : 'disconnect'}`, { method: 'POST' })
+          const result = await api<{ authorizationUrl?: string }>(`/integrations/${id}/${next === 'ativa' ? 'connect' : 'disconnect'}`, {
+            method: 'POST',
+          })
+          if (result?.authorizationUrl) {
+            if (!isTrustedAuthorizationUrl(result.authorizationUrl)) {
+              showToast('URL de autorização rejeitada.')
+              return
+            }
+            window.location.assign(result.authorizationUrl)
+            return
+          }
           setIntegrations((list) => list.map((item) => (item.id === id ? { ...item, status: next } : item)))
         },
         () => {
@@ -256,10 +268,11 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
 
   const backfillIntegration = useCallback(
     (id: string) => {
-      run(
+      if (!isSafeIntegrationId(id)) return Promise.resolve()
+      return run(
         async () => {
-          await api(`/integrations/${id}/backfill`, { method: 'POST' })
-          showToast(`Backfill de ${id} enviado ao backend.`)
+          const result = await api<{ orders?: number; invoices?: number }>(`/integrations/${id}/backfill`, { method: 'POST' })
+          showToast(`Backfill: ${asCount(result?.orders)} pedidos, ${asCount(result?.invoices)} notas.`)
         },
         () => showToast('Backfill requer sessão no backend.'),
         showToast,

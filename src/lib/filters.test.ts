@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { initialCases, orders, payments } from '../test/fixtures'
-import { caseMatches, DEFAULT_FILTERS, isValidIsoDate, normalizeFilters, orderMatches, periodLabel, toQueryString } from './filters'
+import { caseMatches, DEFAULT_FILTERS, isValidIsoDate, normalizeFilters, orderMatches, periodLabel, PERIOD_PRESETS, toQueryString } from './filters'
 
 describe('filters', () => {
   it('labels the selected period', () => {
     expect(periodLabel('2026-05-01', '2026-05-31')).toBe('01/05/2026 — 31/05/2026')
+  })
+
+  it('exposes presets for live ingest windows', () => {
+    expect(PERIOD_PRESETS.some((item) => item.id === '90d')).toBe(true)
+    expect(PERIOD_PRESETS.some((item) => item.id === '2026-08' && item.from === '2026-08-01')).toBe(true)
   })
 
   it('keeps May Mercado Livre orders in the default recorte', () => {
