@@ -20,5 +20,14 @@ describe('StatusBadge', () => {
 
     rerender(<StatusBadge kind="closing" value="open" />)
     expect(screen.getByText('Aberto')).toBeInTheDocument()
+
+    rerender(<StatusBadge kind="invoice" value="autorizada" />)
+    expect(screen.getByText('Autorizada')).toBeInTheDocument()
+
+    rerender(<StatusBadge kind="plain" value="ativa" />)
+    expect(screen.getByText('ativa')).toBeInTheDocument()
+
+    rerender(<StatusBadge kind="impact" value="desconhecido" />)
+    expect(screen.getByText('desconhecido')).toBeInTheDocument()
   })
 })

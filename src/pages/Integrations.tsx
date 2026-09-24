@@ -4,12 +4,12 @@ import { useAppState } from '../context/AppState'
 import { formatDateTime } from '../lib/format'
 
 export function Integrations() {
-  const { integrations, toggleIntegration, showToast } = useAppState()
+  const { integrations, toggleIntegration, backfillIntegration } = useAppState()
   return (
     <section>
       <PageHeader
         title="Integrações"
-        subtitle="Piloto: Mercado Livre + Mercado Pago + CSV. Shopee e fiscal entram como expansão."
+        subtitle="Piloto: Mercado Livre + Mercado Pago + CSV. Shopee entra com dados de junho para o filtro."
       />
       <div className="integration-grid">
         {integrations.map((item) => (
@@ -24,7 +24,7 @@ export function Integrations() {
               <button type="button" className="btn-primary btn" onClick={() => toggleIntegration(item.id)}>
                 {item.status === 'ativa' ? 'Desconectar' : 'Conectar'}
               </button>
-              <button type="button" className="btn" onClick={() => showToast('Backfill de 90 dias simulado.')}>
+              <button type="button" className="btn" onClick={() => backfillIntegration(item.id)}>
                 Backfill
               </button>
             </div>

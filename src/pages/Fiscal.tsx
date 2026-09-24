@@ -1,31 +1,47 @@
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QueryStatus } from '../api/hooks'
 import { DataTable } from '../components/DataTable'
 import { KpiCard } from '../components/KpiCard'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
-import { invoices, orders } from '../data/mock'
+import { useAppState } from '../context/AppState'
+import { useFilters } from '../context/FilterContext'
+import { inPeriod, orderMatches } from '../lib/filters'
 import { formatBRL, formatDateTime } from '../lib/format'
 import type { Invoice } from '../types'
 
 export function Fiscal() {
   const navigate = useNavigate()
-  const pendingOrders = orders.filter((item) => !item.invoiceId)
+  const { filters } = useFilters()
+  const { error, invoices, loading, orders } = useAppState()
+  const documents = useMemo(() => invoices.filter((item) => inPeriod(item.issuedAt, filters)), [filters, invoices])
+  const pendingOrders = useMemo(
+    () => orders.filter((item) => orderMatches(item, filters) && !item.invoiceId).map((item) => item.id),
+    [filters, orders],
+  )
+  const mismatches = documents.filter((item) => {
+    const order = orders.find((row) => row.id === item.orderId)
+    return order != null && Math.abs(order.grossAmount - item.total) > 0.05
+  }).length
+
   return (
     <section>
       <PageHeader
         title="Fiscal"
         subtitle="Adapter de provedor. Sem motor tributário próprio. Campos CBS/IBS já visíveis no modelo."
       />
+      <QueryStatus loading={loading} error={error} />
       <div className="grid-4" style={{ marginBottom: 16 }}>
-        <KpiCard label="Documentos no recorte" value={String(invoices.length)} />
-        <KpiCard label="Autorizadas" value={String(invoices.filter((item) => item.status === 'autorizada').length)} />
+        <KpiCard label="Documentos no recorte" value={String(documents.length)} />
+        <KpiCard label="Autorizadas" value={String(documents.filter((item) => item.status === 'autorizada').length)} />
         <KpiCard label="Pedidos sem nota" value={String(pendingOrders.length)} tone="warning" />
-        <KpiCard label="Divergência de valor" value="1" tone="danger" />
+        <KpiCard label="Divergência de valor" value={String(mismatches)} tone="danger" />
       </div>
       <article className="card">
         <h2>Documentos</h2>
         <DataTable<Invoice>
-          rows={invoices}
+          rows={documents}
           rowKey={(row) => row.id}
           onRowClick={(row) => navigate(`/pedidos/${row.orderId}`)}
           columns={[
@@ -43,14 +59,15 @@ export function Fiscal() {
       </article>
       <article className="card" style={{ marginTop: 12 }}>
         <h2>Pendências fiscais</h2>
-        {pendingOrders.map((item) => (
-          <p key={item.id}>
-            {item.id} sem documento vinculado.{' '}
-            <button type="button" className="btn" onClick={() => navigate(`/pedidos/${item.id}`)}>
+        {pendingOrders.map((id) => (
+          <p key={id}>
+            {id} sem documento vinculado.{' '}
+            <button type="button" className="btn" onClick={() => navigate(`/pedidos/${id}`)}>
               Ver pedido
             </button>
           </p>
         ))}
+        {pendingOrders.length === 0 && <p className="muted">Nenhuma pendência fiscal neste recorte.</p>}
       </article>
     </section>
   )

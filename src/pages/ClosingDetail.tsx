@@ -1,16 +1,25 @@
 import { useParams } from 'react-router-dom'
+import { useApi } from '../api/hooks'
 import { KpiCard } from '../components/KpiCard'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
-import { causeBreakdown } from '../data/mock'
+import { useAuth } from '../context/AuthContext'
+import { useFilters } from '../context/FilterContext'
 import { downloadCsv, formatBRL, formatDateTime } from '../lib/format'
+import type { Closing } from '../types'
 
 export function ClosingDetail() {
   const { id } = useParams()
   const { closings, closePeriod } = useAppState()
-  const item = closings.find((row) => row.id === id)
-  if (!item) return <p>Período não encontrado.</p>
+  const { session } = useAuth()
+  const { filters } = useFilters()
+  const { data, error, loading } = useApi<Closing>(session && id ? `/closings/${id}` : null)
+  const item = data ?? closings.find((row) => row.id === id)
+  if (loading && !item) return <p className="muted">Carregando fechamento…</p>
+  if (!item) return <p className="muted">{error ?? 'Período não encontrado.'}</p>
+  const deltas = item.deltas ?? []
+  const causes = item.causes ?? []
 
   return (
     <section>
@@ -61,14 +70,26 @@ export function ClosingDetail() {
           <div className="alert info" style={{ marginTop: 12 }}>
             Após CLOSED, um payout tardio não altera silenciosamente este período. Ele gera ajuste/delta e, se necessário, reabertura explícita.
           </div>
+          {deltas.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <h3>Deltas tardios</h3>
+              {deltas.map((delta) => (
+                <p key={`${delta.createdAt}-${delta.reason}`}>
+                  {formatDateTime(delta.createdAt)} · {delta.reason} · {formatBRL(delta.amount)}
+                </p>
+              ))}
+            </div>
+          )}
         </article>
         <article className="card">
           <h2>Principais motivos em aberto</h2>
-          {causeBreakdown.map((row) => (
+          {causes.map((row) => (
             <p key={row.cause}>
               {row.cause}: {formatBRL(row.value)}
             </p>
           ))}
+          {causes.length === 0 && <p className="muted">Nenhuma causa aberta neste fechamento.</p>}
+          <p className="muted">Recorte operacional atual: {filters.from} a {filters.to}.</p>
         </article>
       </div>
     </section>

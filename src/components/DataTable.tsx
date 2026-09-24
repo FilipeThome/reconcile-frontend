@@ -28,7 +28,7 @@ export function DataTable<T>({ columns, rows, rowKey, onRowClick }: Props<T>) {
           {rows.length === 0 && (
             <tr>
               <td colSpan={columns.length} className="muted">
-                Nenhum registro neste recorte do protótipo.
+                Nenhum registro neste recorte.
               </td>
             </tr>
           )}
