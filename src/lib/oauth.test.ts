@@ -13,6 +13,8 @@ describe('oauth helpers', () => {
   it('accepts only https authorize hosts without credentials', () => {
     expect(isTrustedAuthorizationUrl('https://auth.mercadolivre.com.br/authorization?response_type=code')).toBe(true)
     expect(isTrustedAuthorizationUrl('https://open.shopee.com.br/auth')).toBe(true)
+    expect(isTrustedAuthorizationUrl('https://sellercentral.amazon.com.br/apps/authorize/consent')).toBe(true)
+    expect(isTrustedAuthorizationUrl('https://sellercentral.amazon.com/apps/authorize/consent')).toBe(true)
     expect(isTrustedAuthorizationUrl('https://evil.example/authorization')).toBe(false)
     expect(isTrustedAuthorizationUrl('http://auth.mercadolivre.com.br/authorization')).toBe(false)
     expect(isTrustedAuthorizationUrl('javascript:alert(1)')).toBe(false)

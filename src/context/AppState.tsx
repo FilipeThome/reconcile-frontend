@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api, loadSession } from '../api/client'
+import { t } from '../i18n/locale'
 import { asCount, isSafeIntegrationId, isTrustedAuthorizationUrl } from '../lib/oauth'
 import type {
   CalculationSnapshot,
@@ -78,11 +79,11 @@ type AppStateValue = {
 
 const AppStateContext = createContext<AppStateValue | null>(null)
 
-const statusToast: Record<CaseStatus, string> = {
-  aberta: 'reaberto',
-  em_analise: 'marcado em análise',
-  resolvida: 'resolvido',
-  ignorada: 'ignorado',
+const statusToast: Record<CaseStatus, 'toast.reopened' | 'toast.inReview' | 'toast.resolved' | 'toast.ignored'> = {
+  aberta: 'toast.reopened',
+  em_analise: 'toast.inReview',
+  resolvida: 'toast.resolved',
+  ignorada: 'toast.ignored',
 }
 
 function run(task: () => Promise<void>, fallback: () => void, onError: (message: string) => void): Promise<void> {
@@ -148,11 +149,11 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
         async () => {
           await api(`/cases/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) })
           setCases((current) => current.map((item) => (item.id === id ? { ...item, status } : item)))
-          showToast(`Caso ${id} ${statusToast[status]}.`)
+          showToast(t('toast.case', { id, status: t(statusToast[status]) }))
         },
         () => {
           setCases((current) => current.map((item) => (item.id === id ? { ...item, status } : item)))
-          showToast(`Caso ${id} ${statusToast[status]}.`)
+          showToast(t('toast.case', { id, status: t(statusToast[status]) }))
         },
         showToast,
       )
@@ -191,13 +192,13 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
           setClosings((current) =>
             current.map((item) => (item.id === id ? { ...item, status: 'closed', closedAt: new Date().toISOString() } : item)),
           )
-          showToast(`Período ${id} fechado.`)
+          showToast(t('toast.periodClosed', { id }))
         },
         () => {
           setClosings((current) =>
             current.map((item) => (item.id === id ? { ...item, status: 'closed', closedAt: new Date().toISOString() } : item)),
           )
-          showToast(`Período ${id} fechado.`)
+          showToast(t('toast.periodClosed', { id }))
         },
         showToast,
       )
@@ -217,7 +218,7 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
           })
           if (result?.authorizationUrl) {
             if (!isTrustedAuthorizationUrl(result.authorizationUrl)) {
-              showToast('URL de autorização rejeitada.')
+              showToast(t('oauth.bad_url'))
               return
             }
             window.location.assign(result.authorizationUrl)
@@ -257,9 +258,9 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
       run(
         async () => {
           const result = await api<{ findings?: { code: string }[] }>(`/cases/${id}/reprocess`, { method: 'POST' })
-          showToast(`Caso ${id} reprocessado. ${result.findings?.length ?? 0} achado(s) do motor.`)
+          showToast(t('toast.reprocessed', { id, count: result.findings?.length ?? 0 }))
         },
-        () => showToast('Reprocessamento requer sessão no backend.'),
+        () => showToast(t('toast.reprocessNeedsSession')),
         showToast,
       )
     },
@@ -272,9 +273,9 @@ export function AppStateProvider({ children, seed }: { children: ReactNode; seed
       return run(
         async () => {
           const result = await api<{ orders?: number; invoices?: number }>(`/integrations/${id}/backfill`, { method: 'POST' })
-          showToast(`Backfill: ${asCount(result?.orders)} pedidos, ${asCount(result?.invoices)} notas.`)
+          showToast(t('toast.backfill', { orders: asCount(result?.orders), invoices: asCount(result?.invoices) }))
         },
-        () => showToast('Backfill requer sessão no backend.'),
+        () => showToast(t('toast.backfillNeedsSession')),
         showToast,
       )
     },

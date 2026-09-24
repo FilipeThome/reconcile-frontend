@@ -4,12 +4,14 @@ import { describe, expect, it } from 'vitest'
 import { AppStateProvider } from '../context/AppState'
 import { AuthProvider } from '../context/AuthContext'
 import { FilterProvider } from '../context/FilterContext'
+import { LocaleProvider } from '../context/LocaleContext'
 import { createTestSeed } from '../test/seed'
 import { testSession } from '../test/session'
 import { RequireAuth } from './RequireAuth'
 
 function wrap(session: typeof testSession | null) {
   return render(
+    <LocaleProvider>
     <AuthProvider initialSession={session}>
       <FilterProvider>
         <AppStateProvider seed={createTestSeed()}>
@@ -23,7 +25,8 @@ function wrap(session: typeof testSession | null) {
           </MemoryRouter>
         </AppStateProvider>
       </FilterProvider>
-    </AuthProvider>,
+    </AuthProvider>
+    </LocaleProvider>,
   )
 }
 

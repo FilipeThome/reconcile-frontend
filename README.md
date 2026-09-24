@@ -11,6 +11,8 @@ npm run dev
 
 A UI sobe em `http://localhost:5173` e encaminha `/api` para o backend em `http://localhost:8080`.
 
+Com o backend em `SEED_DEMO=true` e `SEED_LEDGER=true`, o login piloto é `ana.dantas@lojaexemplo.com.br` / `senha123`. O recorte padrão da UI é **maio/2026**, o mesmo período dos pedidos seed.
+
 ## Docker
 
 Com o backend no ar:

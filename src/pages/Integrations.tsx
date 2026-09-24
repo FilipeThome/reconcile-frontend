@@ -5,10 +5,12 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { formatDateTime } from '../lib/format'
+import { useLocale } from '../context/LocaleContext'
 import { oauthCallbackMessage } from '../lib/oauth'
 
 export function Integrations() {
   const { integrations, toggleIntegration, backfillIntegration, showToast } = useAppState()
+  const { t } = useLocale()
   const { refresh } = useFilters()
   const [params, setParams] = useSearchParams()
 
@@ -24,8 +26,8 @@ export function Integrations() {
   return (
     <section>
       <PageHeader
-        title="Integrações"
-        subtitle="Conectar abre a página oficial de autorização: Mercado Livre (auth.mercadolivre.com.br) e Shopee (open.shopee.com.br/auth)."
+        title={t('int.title')}
+        subtitle={t('int.subtitle')}
       />
       <div className="integration-grid">
         {integrations.map((item) => (
@@ -35,10 +37,10 @@ export function Integrations() {
               <StatusBadge kind="plain" value={item.status} />
             </div>
             <p className="muted">{item.detail}</p>
-            <p className="muted">Última sync: {item.lastSync ? formatDateTime(item.lastSync) : 'nunca'}</p>
+            <p className="muted">{t('int.lastSync')}: {item.lastSync ? formatDateTime(item.lastSync) : t('int.never')}</p>
             <div className="row-actions mt-12">
               <button type="button" className="btn-primary btn" onClick={() => toggleIntegration(item.id)}>
-                {item.status === 'ativa' ? 'Desconectar' : 'Conectar'}
+                {item.status === 'ativa' ? t('int.disconnect') : t('int.connect')}
               </button>
               <button
                 type="button"

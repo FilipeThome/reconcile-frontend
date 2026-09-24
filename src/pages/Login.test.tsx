@@ -5,15 +5,18 @@ import { describe, expect, it, vi } from 'vitest'
 import { mockFetch } from '../test/mockApi'
 import { testSession } from '../test/session'
 import { AuthProvider } from '../context/AuthContext'
+import { LocaleProvider } from '../context/LocaleContext'
 import { Login } from './Login'
 
 function renderLogin(session = null as typeof testSession | null) {
   return render(
-    <AuthProvider initialSession={session}>
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    </AuthProvider>,
+    <LocaleProvider>
+      <AuthProvider initialSession={session}>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </AuthProvider>
+    </LocaleProvider>,
   )
 }
 

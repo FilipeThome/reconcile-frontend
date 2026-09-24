@@ -3,7 +3,8 @@ import { BarFill } from '../components/BarFill'
 import { KpiCard } from '../components/KpiCard'
 import { PageHeader } from '../components/PageHeader'
 import { useAppState } from '../context/AppState'
-import { formatBRL } from '../lib/format'
+import { t } from '../i18n/locale'
+import { formatBRL, formatCount } from '../lib/format'
 
 export function CalculationEngine() {
   const [tab, setTab] = useState('calculos')
@@ -15,19 +16,19 @@ export function CalculationEngine() {
   return (
     <section>
       <PageHeader
-        title="Motor de cálculo"
-        subtitle="Determinístico, versionado e explicável. Cada reconciliação guarda um snapshot reproduzível."
+        title={t('engine.title')}
+        subtitle={t('engine.subtitle')}
       />
       <div className="grid-4 mb-16">
-        <KpiCard label="Cálculos no período" value={(engine?.calculations ?? snapshots.length).toLocaleString('pt-BR')} />
-        <KpiCard label="Ajustes identificados" value={String(components.length)} />
-        <KpiCard label="Versão ativa" value={engine?.version ?? 'sce-v1.4'} />
-        <KpiCard label="Tolerância de centavos" value={formatBRL(Number(tolerances?.cents ?? 0.05))} />
+        <KpiCard label={t('engine.calcs')} value={formatCount(engine?.calculations ?? snapshots.length)} />
+        <KpiCard label={t('engine.adjustments')} value={String(components.length)} />
+        <KpiCard label={t('engine.version')} value={engine?.version ?? 'sce-v1.4'} />
+        <KpiCard label={t('engine.tolerance')} value={formatBRL(Number(tolerances?.cents ?? 0.05))} />
       </div>
       <div className="tabs">
         {['calculos', 'componentes', 'config'].map((item) => (
           <button key={item} type="button" className={`tab${tab === item ? ' active' : ''}`} onClick={() => setTab(item)}>
-            {item === 'calculos' ? 'Cálculos' : item === 'componentes' ? 'Componentes' : 'Configurações'}
+            {item === 'calculos' ? t('engine.tab.calculos') : item === 'componentes' ? t('engine.tab.componentes') : t('engine.tab.config')}
           </button>
         ))}
       </div>
@@ -36,7 +37,7 @@ export function CalculationEngine() {
           <article className="card">
             {example ? (
               <>
-                <h2>Exemplo operacional — {example.orderId}</h2>
+                <h2>{t('engine.example', { id: example.orderId })}</h2>
                 <p>Gross {formatBRL(example.gross)}</p>
                 {example.components.map((item) => (
                   <p key={item.label}>
@@ -47,17 +48,17 @@ export function CalculationEngine() {
                   Expected settlement: <strong>{formatBRL(example.expected)}</strong>
                 </p>
                 <p>Recebido: {formatBRL(example.actual)}</p>
-                <p className="muted">A decomposição acima vem do snapshot persistido no backend.</p>
+                <p className="muted">{t('engine.fromSnapshot')}</p>
               </>
             ) : (
               <>
-                <h2>Exemplo operacional</h2>
-                <p className="muted">Nenhum snapshot disponível neste workspace.</p>
+                <h2>{t('engine.exampleEmpty')}</h2>
+                <p className="muted">{t('engine.noSnapshot')}</p>
               </>
             )}
           </article>
           <article className="card">
-            <h2>Camadas de matching</h2>
+            <h2>{t('engine.layers')}</h2>
             <ol className="list-plain">
               {(engine?.layers ?? ['ORDER_PAYMENT', 'PAYMENT_SETTLEMENT', 'SETTLEMENT_PAYOUT', 'ORDER_INVOICE', 'CASE_CONSISTENCY']).map(
                 (layer) => (
@@ -65,13 +66,13 @@ export function CalculationEngine() {
                 ),
               )}
             </ol>
-            <p className="muted">Match determinístico primeiro. Score probabilístico só apoia revisão manual.</p>
+            <p className="muted">{t('engine.layersHint')}</p>
           </article>
         </div>
       )}
       {tab === 'componentes' && (
         <article className="card">
-          <h2>Componentes do período</h2>
+          <h2>{t('engine.components')}</h2>
           <div className="bars">
             {components.map((item) => (
               <div className="bar-row" key={item.label}>
@@ -82,18 +83,18 @@ export function CalculationEngine() {
                 <strong>{formatBRL(item.amount)}</strong>
               </div>
             ))}
-            {components.length === 0 && <p className="muted">Nenhum componente de tarifa no recorte.</p>}
+            {components.length === 0 && <p className="muted">{t('engine.noComponents')}</p>}
           </div>
         </article>
       )}
       {tab === 'config' && (
         <article className="card">
-          <h2>Parâmetros do MVP</h2>
-          <p>Janela de liquidação padrão: {tolerances?.settlementDeadlineDays ?? 14} dias</p>
-          <p>Tolerância financeira: {formatBRL(Number(tolerances?.cents ?? 0.05))}</p>
-          <p>Tolerância de data: {tolerances?.dateDays ?? 2} dias</p>
-          <p>Frete e arredondamento: não ocultam diferença material</p>
-          <p className="muted">IA pode classificar e resumir, mas não decide reconciliação financeira.</p>
+          <h2>{t('engine.params')}</h2>
+          <p>{t('engine.window', { days: tolerances?.settlementDeadlineDays ?? 14 })}</p>
+          <p>{t('engine.moneyTolerance', { value: formatBRL(Number(tolerances?.cents ?? 0.05)) })}</p>
+          <p>{t('engine.dateTolerance', { days: tolerances?.dateDays ?? 2 })}</p>
+          <p>{t('engine.freight')}</p>
+          <p className="muted">{t('engine.ai')}</p>
         </article>
       )}
     </section>

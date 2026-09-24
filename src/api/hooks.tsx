@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { t } from '../i18n/locale'
 import { api } from './client'
 
 export function useApi<T>(path: string | null, refreshKey = 0) {
@@ -42,7 +43,7 @@ export function useApi<T>(path: string | null, refreshKey = 0) {
 }
 
 export function QueryStatus({ loading, error }: { loading: boolean; error: string | null }) {
-  if (loading) return <p className="muted">Carregando dados do backend…</p>
-  if (error) return <p className="muted">Não foi possível carregar: {error}</p>
+  if (loading) return <p className="muted">{t('query.loading')}</p>
+  if (error) return <p className="muted">{t('query.failed', { error })}</p>
   return null
 }

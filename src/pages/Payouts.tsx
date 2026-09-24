@@ -6,6 +6,7 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { inPeriod } from '../lib/filters'
+import { t } from '../i18n/locale'
 import { formatBRL, formatDateTime } from '../lib/format'
 import type { Payout } from '../types'
 
@@ -19,22 +20,22 @@ export function Payouts() {
 
   return (
     <section>
-      <PageHeader title="Repasses" subtitle="Payout é o lote efetivamente depositado pelo gateway — não é 1:1 com o pedido." />
+      <PageHeader title={t('out.title')} subtitle={t('out.subtitle')} />
       <QueryStatus loading={loading} error={error} />
       <article className="card">
         <DataTable<Payout>
           rows={rows}
           rowKey={(row) => row.id}
           columns={[
-            { key: 'id', header: 'Repasse', render: (row) => <span className="linkish">{row.id}</span> },
-            { key: 'gw', header: 'Gateway', render: (row) => row.gateway },
-            { key: 'date', header: 'Data', render: (row) => formatDateTime(row.date) },
-            { key: 'gross', header: 'Bruto', render: (row) => formatBRL(row.grossAmount) },
-            { key: 'fees', header: 'Tarifas', render: (row) => formatBRL(row.fees) },
-            { key: 'net', header: 'Líquido', render: (row) => formatBRL(row.netAmount) },
-            { key: 'orders', header: 'Pedidos no lote', render: (row) => row.orderIds.join(', ') },
-            { key: 'st', header: 'Status', render: (row) => <StatusBadge kind="plain" value={row.status} /> },
-            { key: 'rec', header: 'Situação', render: (row) => <StatusBadge kind="recon" value={row.reconciliation} /> },
+            { key: 'id', header: t('out.payout'), render: (row) => <span className="linkish">{row.id}</span> },
+            { key: 'gw', header: t('common.gateway'), render: (row) => row.gateway },
+            { key: 'date', header: t('common.date'), render: (row) => formatDateTime(row.date) },
+            { key: 'gross', header: t('pay.gross'), render: (row) => formatBRL(row.grossAmount) },
+            { key: 'fees', header: t('out.fees'), render: (row) => formatBRL(row.fees) },
+            { key: 'net', header: t('out.net'), render: (row) => formatBRL(row.netAmount) },
+            { key: 'orders', header: t('out.orders'), render: (row) => row.orderIds.join(', ') },
+            { key: 'st', header: t('common.status'), render: (row) => <StatusBadge kind="plain" value={row.status} /> },
+            { key: 'rec', header: t('common.situation'), render: (row) => <StatusBadge kind="recon" value={row.reconciliation} /> },
           ]}
         />
       </article>

@@ -8,7 +8,8 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { caseMatches, caseSearchText } from '../lib/filters'
-import { downloadCsv, formatBRL, formatDateTime, causeLabel } from '../lib/format'
+import { t } from '../i18n/locale'
+import { downloadCsv, formatBRL, formatDateTime, causeLabel, caseStatusLabel } from '../lib/format'
 import type { CaseStatus, ReconciliationCase } from '../types'
 
 export function Discrepancies() {
@@ -41,7 +42,7 @@ export function Discrepancies() {
 
   return (
     <section>
-      <PageHeader title="Divergências" subtitle="Caixa de entrada operacional. Cada caso tem causa, impacto, evidências e ação sugerida.">
+      <PageHeader title={t('cases.title')} subtitle={t('cases.subtitle')}>
         <button
           type="button"
           className="btn"
@@ -52,27 +53,27 @@ export function Discrepancies() {
             ])
           }
         >
-          Exportar CSV
+          {t('cases.export')}
         </button>
       </PageHeader>
       <QueryStatus loading={loading} error={error} />
 
       <div className="grid-4 mb-16">
-        <KpiCard label="Casos no recorte" value={String(filtered.length)} />
-        <KpiCard label="Valor em aberto" value={formatBRL(openAmount)} tone="warning" />
-        <KpiCard label="Recuperável" value={formatBRL(recoverable)} />
-        <KpiCard label="Perda confirmada" value={formatBRL(loss)} tone="danger" />
+        <KpiCard label={t('cases.inPeriod')} value={String(filtered.length)} />
+        <KpiCard label={t('cases.openAmount')} value={formatBRL(openAmount)} tone="warning" />
+        <KpiCard label={t('dash.recoverable')} value={formatBRL(recoverable)} />
+        <KpiCard label={t('dash.confirmedLoss')} value={formatBRL(loss)} tone="danger" />
       </div>
 
       <div className="tabs">
         {(['todas', 'aberta', 'em_analise', 'resolvida', 'ignorada'] as const).map((item) => (
           <button key={item} type="button" className={`tab${tab === item ? ' active' : ''}`} onClick={() => setTab(item)}>
-            {item === 'todas' ? 'Todas' : item.replace('_', ' ')}
+            {item === 'todas' ? t('cases.all') : caseStatusLabel(item)}
           </button>
         ))}
       </div>
       <div className="toolbar">
-        <input className="field" placeholder="Buscar caso, pedido ou causa" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input className="field" placeholder={t('cases.search')} value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
       <article className="card">
         <DataTable<ReconciliationCase>
@@ -80,15 +81,15 @@ export function Discrepancies() {
           rowKey={(row) => row.id}
           onRowClick={(row) => navigate(`/divergencias/${row.id}`)}
           columns={[
-            { key: 'id', header: 'Caso', render: (row) => <span className="linkish">{row.id}</span> },
-            { key: 'date', header: 'Detectada em', render: (row) => formatDateTime(row.openedAt) },
-            { key: 'order', header: 'Pedido', render: (row) => row.orderId },
+            { key: 'id', header: t('dash.case'), render: (row) => <span className="linkish">{row.id}</span> },
+            { key: 'date', header: t('cases.detected'), render: (row) => formatDateTime(row.openedAt) },
+            { key: 'order', header: t('common.order'), render: (row) => row.orderId },
             { key: 'set', header: 'Settlement', render: (row) => row.settlementId ?? '—' },
-            { key: 'cause', header: 'Causa', render: (row) => causeLabel(row.cause) },
-            { key: 'amount', header: 'Valor', render: (row) => formatBRL(row.amount) },
-            { key: 'impact', header: 'Impacto', render: (row) => <StatusBadge kind="impact" value={row.impact} /> },
-            { key: 'prio', header: 'Prioridade', render: (row) => <StatusBadge kind="priority" value={row.priority} /> },
-            { key: 'st', header: 'Status', render: (row) => <StatusBadge kind="case" value={row.status} /> },
+            { key: 'cause', header: t('dash.cause'), render: (row) => causeLabel(row.cause) },
+            { key: 'amount', header: t('common.amount'), render: (row) => formatBRL(row.amount) },
+            { key: 'impact', header: t('cases.impact'), render: (row) => <StatusBadge kind="impact" value={row.impact} /> },
+            { key: 'prio', header: t('cases.priority'), render: (row) => <StatusBadge kind="priority" value={row.priority} /> },
+            { key: 'st', header: t('common.status'), render: (row) => <StatusBadge kind="case" value={row.status} /> },
           ]}
         />
       </article>
