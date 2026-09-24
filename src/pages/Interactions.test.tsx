@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { AppStateProvider } from '../context/AppState'
 import { AuthProvider } from '../context/AuthContext'
 import { FilterProvider } from '../context/FilterContext'
+import { LocaleProvider } from '../context/LocaleContext'
 import { renderApp } from '../test/render'
 import { Closings } from './Closings'
 import { Discrepancies } from './Discrepancies'
@@ -65,13 +66,15 @@ describe('page interactions', () => {
 
   it('renders settings fallbacks without catalog data', () => {
     render(
+      <LocaleProvider>
       <AuthProvider initialSession={null}>
         <FilterProvider>
           <AppStateProvider>
             <Settings />
           </AppStateProvider>
         </FilterProvider>
-      </AuthProvider>,
+      </AuthProvider>
+      </LocaleProvider>,
     )
     expect(screen.getByRole('heading', { name: 'Configurações' })).toBeInTheDocument()
   })

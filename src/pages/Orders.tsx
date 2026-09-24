@@ -7,7 +7,8 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { orderMatches } from '../lib/filters'
-import { downloadCsv, formatBRL, formatDateTime } from '../lib/format'
+import { t } from '../i18n/locale'
+import { downloadCsv, formatBRL, formatCount, formatDateTime, reconLabel } from '../lib/format'
 import type { Order } from '../types'
 
 export function Orders() {
@@ -37,7 +38,7 @@ export function Orders() {
 
   return (
     <section>
-      <PageHeader title="Pedidos" subtitle="Origem canônica do ciclo: pedido → pagamento → settlement → payout → nota.">
+      <PageHeader title={t('orders.title')} subtitle={t('orders.subtitle')}>
         <button
           type="button"
           className="btn"
@@ -48,35 +49,35 @@ export function Orders() {
             ])
           }
         >
-          Exportar CSV
+          {t('orders.export')}
         </button>
       </PageHeader>
       <QueryStatus loading={loading} error={error} />
 
       <div className="summary-bar">
         <span>
-          Pedidos <strong>{rows.length.toLocaleString('pt-BR')}</strong>
+          {t('orders.count')} <strong>{formatCount(rows.length)}</strong>
         </span>
         <span>
-          Vendas brutas <strong>{formatBRL(gross)}</strong>
+          {t('orders.gross')} <strong>{formatBRL(gross)}</strong>
         </span>
         <span>
-          Ticket médio <strong>{formatBRL(rows.length ? gross / rows.length : 0)}</strong>
+          {t('orders.ticket')} <strong>{formatBRL(rows.length ? gross / rows.length : 0)}</strong>
         </span>
         <span>
-          Itens <strong>{items.toLocaleString('pt-BR')}</strong>
+          {t('orders.items')} <strong>{formatCount(items)}</strong>
         </span>
       </div>
 
       <div className="toolbar">
-        <input className="field" placeholder="Buscar pedido ou comprador" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input className="field" placeholder={t('orders.search')} value={query} onChange={(e) => setQuery(e.target.value)} />
         <select className="select" value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="todos">Todas as situações</option>
-          <option value="reconciliado">Reconciliado</option>
-          <option value="divergente">Divergente</option>
-          <option value="pendente_liquidacao">Pendente de liquidação</option>
-          <option value="pendente_dados">Pendente de dados</option>
-          <option value="reconciliado_alerta">Com alerta</option>
+          <option value="todos">{t('orders.allStatus')}</option>
+          <option value="reconciliado">{reconLabel('reconciliado')}</option>
+          <option value="divergente">{reconLabel('divergente')}</option>
+          <option value="pendente_liquidacao">{reconLabel('pendente_liquidacao')}</option>
+          <option value="pendente_dados">{reconLabel('pendente_dados')}</option>
+          <option value="reconciliado_alerta">{t('orders.alert')}</option>
         </select>
       </div>
 
@@ -86,13 +87,13 @@ export function Orders() {
           rowKey={(row) => row.id}
           onRowClick={(row) => navigate(`/pedidos/${row.id}`)}
           columns={[
-            { key: 'id', header: 'Pedido', render: (row) => <span className="linkish">{row.id}</span> },
-            { key: 'date', header: 'Data', render: (row) => formatDateTime(row.date) },
-            { key: 'buyer', header: 'Comprador', render: (row) => row.buyer },
-            { key: 'mp', header: 'Marketplace', render: (row) => row.marketplace },
-            { key: 'total', header: 'Total', render: (row) => formatBRL(row.grossAmount) },
-            { key: 'status', header: 'Status', render: (row) => <StatusBadge kind="plain" value={row.status} /> },
-            { key: 'sit', header: 'Situação', render: (row) => <StatusBadge kind="recon" value={row.reconciliation} /> },
+            { key: 'id', header: t('orders.order'), render: (row) => <span className="linkish">{row.id}</span> },
+            { key: 'date', header: t('orders.date'), render: (row) => formatDateTime(row.date) },
+            { key: 'buyer', header: t('orders.buyer'), render: (row) => row.buyer },
+            { key: 'mp', header: t('common.marketplace'), render: (row) => row.marketplace },
+            { key: 'total', header: t('orders.total'), render: (row) => formatBRL(row.grossAmount) },
+            { key: 'status', header: t('common.status'), render: (row) => <StatusBadge kind="plain" value={row.status} /> },
+            { key: 'sit', header: t('orders.situation'), render: (row) => <StatusBadge kind="recon" value={row.reconciliation} /> },
           ]}
         />
       </article>

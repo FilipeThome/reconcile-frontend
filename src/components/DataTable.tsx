@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { t } from '../i18n/locale'
 
 export type Column<T> = {
   key: string
@@ -28,7 +29,7 @@ export function DataTable<T>({ columns, rows, rowKey, onRowClick }: Props<T>) {
           {rows.length === 0 && (
             <tr>
               <td colSpan={columns.length} className="muted">
-                Nenhum registro neste recorte.
+                {t('table.empty')}
               </td>
             </tr>
           )}

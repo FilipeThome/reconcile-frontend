@@ -2,10 +2,12 @@ import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useAuth } from '../context/AuthContext'
-import { formatBRL } from '../lib/format'
+import { LanguageSwitch, useLocale } from '../context/LocaleContext'
+import { displayRole, formatBRL } from '../lib/format'
 
 export function Settings() {
   const { session } = useAuth()
+  const { t } = useLocale()
   const { settings } = useAppState()
   const tenantView = settings?.tenant
   const userList = settings?.users ?? []
@@ -20,33 +22,38 @@ export function Settings() {
 
   return (
     <section>
-      <PageHeader title="Configurações" subtitle="RBAC básico, tenant único do piloto e tolerâncias do motor." showPeriod={false} />
+      <PageHeader title={t('set.title')} subtitle={t('set.subtitle')} showPeriod={false} />
+      <article className="card mb-16">
+        <h2>{t('set.language')}</h2>
+        <p className="muted">{t('set.languageHint')}</p>
+        <LanguageSwitch />
+      </article>
       <div className="grid-2">
         <article className="card">
-          <h2>Tenant</h2>
+          <h2>{t('nav.tenant')}</h2>
           <p>{tenantView?.name ?? '—'}</p>
           <p>ID: {tenantView?.id ?? session?.tenantId ?? '—'}</p>
-          <p>Seller Mercado Livre: {tenantView?.sellerId ?? '—'}</p>
+          <p>{t('set.seller')}: {tenantView?.sellerId ?? '—'}</p>
           <p>
-            Usuário atual: {me} ({email})
+            {t('set.current')}: {me} ({email})
           </p>
         </article>
         <article className="card">
-          <h2>Tolerâncias</h2>
-          <p>Centavos: {formatBRL(Number(tolerances.cents))}</p>
-          <p>Janela de data: {tolerances.dateDays} dias</p>
-          <p>Settlement deadline: {tolerances.settlementDeadlineDays} dias</p>
-          <p>Retenção de raw events: {tolerances.rawEventRetentionDays} dias</p>
+          <h2>{t('set.tolerances')}</h2>
+          <p>{t('set.cents')}: {formatBRL(Number(tolerances.cents))}</p>
+          <p>{t('set.dateWindow')}: {tolerances.dateDays} {t('set.days')}</p>
+          <p>{t('set.deadline')}: {tolerances.settlementDeadlineDays} {t('set.days')}</p>
+          <p>{t('set.retention')}: {tolerances.rawEventRetentionDays} {t('set.days')}</p>
         </article>
       </div>
       <article className="card mt-12">
-        <h2>Usuários e papéis</h2>
+        <h2>{t('set.users')}</h2>
         <table>
           <thead>
             <tr>
-              <th>Nome</th>
-              <th>E-mail</th>
-              <th>Papel</th>
+              <th>{t('set.name')}</th>
+              <th>{t('set.email')}</th>
+              <th>{t('set.role')}</th>
             </tr>
           </thead>
           <tbody>
@@ -55,14 +62,14 @@ export function Settings() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
-                  <StatusBadge kind="plain" value={user.role === 'admin' ? 'ativa' : 'disponivel'} /> {user.role}
+                  <StatusBadge kind="plain" value={user.role === 'admin' ? 'ativa' : 'disponivel'} /> {displayRole(user.role)}
                 </td>
               </tr>
             ))}
             {userList.length === 0 && (
               <tr>
                 <td colSpan={3} className="muted">
-                  Nenhum usuário carregado.
+                  {t('set.noUsers')}
                 </td>
               </tr>
             )}

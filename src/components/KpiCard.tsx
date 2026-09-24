@@ -1,3 +1,4 @@
+import { t } from '../i18n/locale'
 import { formatPct } from '../lib/format'
 
 type Props = {
@@ -15,7 +16,7 @@ export function KpiCard({ label, value, delta, hint, tone = 'default' }: Props) 
       <div className="value">{value}</div>
       {delta !== undefined && (
         <div className={`delta ${delta >= 0 ? 'up' : 'down'}`}>
-          {formatPct(delta)} vs período anterior
+          {formatPct(delta)} {t('kpi.vs')}
         </div>
       )}
       {hint && <div className="muted">{hint}</div>}

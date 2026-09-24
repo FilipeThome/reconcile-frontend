@@ -25,7 +25,7 @@ describe('Discrepancies', () => {
   it('filters by status tab', async () => {
     const user = userEvent.setup()
     renderApp(<Discrepancies />)
-    const resolvedTab = screen.getAllByRole('button', { name: 'resolvida' }).find((button) => button.classList.contains('tab'))
+    const resolvedTab = screen.getAllByRole('button', { name: 'Resolvida' }).find((button) => button.classList.contains('tab'))
     await user.click(resolvedTab!)
     expect(screen.getByText('DIV-2026-000130')).toBeInTheDocument()
     expect(screen.queryByText('DIV-2026-000124')).not.toBeInTheDocument()

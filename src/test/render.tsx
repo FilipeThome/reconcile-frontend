@@ -2,6 +2,7 @@ import { render, type RenderOptions } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom'
 import { AppStateProvider } from '../context/AppState'
+import { LocaleProvider } from '../context/LocaleContext'
 import { AuthProvider } from '../context/AuthContext'
 import { FilterProvider } from '../context/FilterContext'
 import { createTestSeed } from './seed'
@@ -15,6 +16,7 @@ export function renderApp(ui: ReactElement, options: Options = {}) {
   const { route = '/', routerProps, ...rest } = options
   return render(ui, {
     wrapper: ({ children }) => (
+      <LocaleProvider>
       <AuthProvider initialSession={null}>
         <FilterProvider>
           <AppStateProvider seed={createTestSeed()}>
@@ -24,6 +26,7 @@ export function renderApp(ui: ReactElement, options: Options = {}) {
           </AppStateProvider>
         </FilterProvider>
       </AuthProvider>
+      </LocaleProvider>
     ),
     ...rest,
   })

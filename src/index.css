@@ -100,6 +100,34 @@ button { cursor: pointer; }
 }
 .nav-link svg { width: 16px; height: 16px; opacity: 0.9; }
 
+.lang-switch {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 10px;
+}
+.lang-switch button {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #dbe7ff;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+.lang-switch button.on {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+.login-card .lang-switch,
+.card .lang-switch { margin: 8px 0; }
+.login-card .lang-switch button,
+.card .lang-switch button {
+  color: var(--text);
+  border-color: var(--border);
+}
+.login-card .lang-switch button.on,
+.card .lang-switch button.on { color: #fff; }
+
 .sidebar-foot {
   margin-top: auto;
   padding: 16px;

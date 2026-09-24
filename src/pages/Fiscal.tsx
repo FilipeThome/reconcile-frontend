@@ -8,6 +8,7 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { inPeriod, orderMatches } from '../lib/filters'
+import { t } from '../i18n/locale'
 import { formatBRL, formatDateTime } from '../lib/format'
 import type { Invoice } from '../types'
 
@@ -28,46 +29,46 @@ export function Fiscal() {
   return (
     <section>
       <PageHeader
-        title="Fiscal"
-        subtitle="Adapter de provedor. Sem motor tributário próprio. Campos CBS/IBS já visíveis no modelo."
+        title={t('fiscal.title')}
+        subtitle={t('fiscal.subtitle')}
       />
       <QueryStatus loading={loading} error={error} />
       <div className="grid-4 mb-16">
-        <KpiCard label="Documentos no recorte" value={String(documents.length)} />
-        <KpiCard label="Autorizadas" value={String(documents.filter((item) => item.status === 'autorizada').length)} />
-        <KpiCard label="Pedidos sem nota" value={String(pendingOrders.length)} tone="warning" />
-        <KpiCard label="Divergência de valor" value={String(mismatches)} tone="danger" />
+        <KpiCard label={t('fiscal.docs')} value={String(documents.length)} />
+        <KpiCard label={t('fiscal.authorized')} value={String(documents.filter((item) => item.status === 'autorizada').length)} />
+        <KpiCard label={t('fiscal.missing')} value={String(pendingOrders.length)} tone="warning" />
+        <KpiCard label={t('fiscal.mismatch')} value={String(mismatches)} tone="danger" />
       </div>
       <article className="card">
-        <h2>Documentos</h2>
+        <h2>{t('fiscal.documents')}</h2>
         <DataTable<Invoice>
           rows={documents}
           rowKey={(row) => row.id}
           onRowClick={(row) => navigate(`/pedidos/${row.orderId}`)}
           columns={[
-            { key: 'id', header: 'Documento', render: (row) => <span className="linkish">{row.id}</span> },
-            { key: 'type', header: 'Tipo', render: (row) => row.type },
-            { key: 'order', header: 'Pedido', render: (row) => row.orderId },
-            { key: 'num', header: 'Número', render: (row) => row.number },
-            { key: 'total', header: 'Total', render: (row) => formatBRL(row.total) },
+            { key: 'id', header: t('fiscal.document'), render: (row) => <span className="linkish">{row.id}</span> },
+            { key: 'type', header: t('fiscal.type'), render: (row) => row.type },
+            { key: 'order', header: t('common.order'), render: (row) => row.orderId },
+            { key: 'num', header: t('fiscal.number'), render: (row) => row.number },
+            { key: 'total', header: t('common.total'), render: (row) => formatBRL(row.total) },
             { key: 'cbs', header: 'CBS', render: (row) => (row.cbs === null ? '—' : formatBRL(row.cbs)) },
             { key: 'ibs', header: 'IBS', render: (row) => (row.ibs === null ? '—' : formatBRL(row.ibs)) },
-            { key: 'st', header: 'Status', render: (row) => <StatusBadge kind="invoice" value={row.status} /> },
-            { key: 'at', header: 'Emissão', render: (row) => (row.issuedAt ? formatDateTime(row.issuedAt) : '—') },
+            { key: 'st', header: t('common.status'), render: (row) => <StatusBadge kind="invoice" value={row.status} /> },
+            { key: 'at', header: t('fiscal.issued'), render: (row) => (row.issuedAt ? formatDateTime(row.issuedAt) : '—') },
           ]}
         />
       </article>
       <article className="card mt-12">
-        <h2>Pendências fiscais</h2>
+        <h2>{t('fiscal.pending')}</h2>
         {pendingOrders.map((id) => (
           <p key={id}>
-            {id} sem documento vinculado.{' '}
+            {id} {t('fiscal.unlinked')}{' '}
             <button type="button" className="btn" onClick={() => navigate(`/pedidos/${id}`)}>
-              Ver pedido
+              {t('fiscal.view')}
             </button>
           </p>
         ))}
-        {pendingOrders.length === 0 && <p className="muted">Nenhuma pendência fiscal neste recorte.</p>}
+        {pendingOrders.length === 0 && <p className="muted">{t('fiscal.none')}</p>}
       </article>
     </section>
   )

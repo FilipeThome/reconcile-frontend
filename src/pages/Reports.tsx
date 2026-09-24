@@ -4,16 +4,17 @@ import { useApi } from '../api/hooks'
 import { PageHeader } from '../components/PageHeader'
 import { useAppState } from '../context/AppState'
 import { useAuth } from '../context/AuthContext'
+import { t, type MessageKey } from '../i18n/locale'
 import { downloadCsv } from '../lib/format'
 
 const reports = [
-  { id: 'fin', title: 'Resumo financeiro', desc: 'Bruto, líquido esperado, recebido e diferença por marketplace.' },
-  { id: 'div', title: 'Divergências em aberto', desc: 'Fila operacional com causa, impacto e responsável.' },
-  { id: 'fee', title: 'Tarifas e custos', desc: 'Decomposição de comissão, frete, pagamento e retenções.' },
-  { id: 'pay', title: 'Repasses do período', desc: 'Lotes de payout com pedidos vinculados.' },
-  { id: 'clo', title: 'Fechamento mensal', desc: 'Snapshot OPEN/CLOSED para o contador.' },
-  { id: 'fis', title: 'Fiscal', desc: 'Documentos, chaves, CBS/IBS e pendências de emissão.' },
-]
+  { id: 'fin', title: 'rep.fin', desc: 'rep.finDesc' },
+  { id: 'div', title: 'rep.div', desc: 'rep.divDesc' },
+  { id: 'fee', title: 'rep.fee', desc: 'rep.feeDesc' },
+  { id: 'pay', title: 'rep.pay', desc: 'rep.payDesc' },
+  { id: 'clo', title: 'rep.clo', desc: 'rep.cloDesc' },
+  { id: 'fis', title: 'rep.fis', desc: 'rep.fisDesc' },
+] as const
 
 type ReportHistory = { type: string; filename: string; createdBy: string; createdAt: string }
 
@@ -27,19 +28,19 @@ export function Reports() {
     try {
       const csv = await api<string>(`/reports/${item.id}/export`, { method: 'POST' })
       downloadCsv(`${item.id}.csv`, csv.split('\n').map((line) => line.split(';')))
-      showToast(`Relatório ${item.title} gerado pelo backend.`)
+      showToast(t('rep.generated', { title: t(item.title) }))
     } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Falha ao exportar')
+      showToast(error instanceof Error ? error.message : t('rep.exportFailed'))
     }
   }
 
   return (
     <section>
-      <PageHeader title="Relatórios" subtitle="Exportação em CSV para o recorte selecionado no filtro global." />
+      <PageHeader title={t('rep.title')} subtitle={t('rep.subtitle')} />
       <div className="tabs">
-        {['relatorios', 'agendamentos', 'historico'].map((item) => (
+        {(['relatorios', 'agendamentos', 'historico'] as const).map((item) => (
           <button key={item} type="button" className={`tab${tab === item ? ' active' : ''}`} onClick={() => setTab(item)}>
-            {item[0].toUpperCase() + item.slice(1)}
+            {t(`rep.tab.${item}` as MessageKey)}
           </button>
         ))}
       </div>
@@ -47,10 +48,10 @@ export function Reports() {
         <div className="report-grid">
           {reports.map((item) => (
             <article className="report-card" key={item.id}>
-              <h3>{item.title}</h3>
-              <p className="muted">{item.desc}</p>
+              <h3>{t(item.title)}</h3>
+              <p className="muted">{t(item.desc)}</p>
               <button type="button" className="btn-primary btn mt-12" onClick={() => void generate(item)}>
-                Gerar
+                {t('rep.generate')}
               </button>
             </article>
           ))}
@@ -58,18 +59,18 @@ export function Reports() {
       )}
       {tab === 'agendamentos' && (
         <article className="card">
-          <p>Todo dia 2, enviar fechamento do mês anterior para carla@contabilparceiro.com.br.</p>
-          <p className="muted">O agendamento continua visual; a geração usa o recorte atual do filtro.</p>
+          <p>{t('rep.schedule')}</p>
+          <p className="muted">{t('rep.scheduleHint')}</p>
         </article>
       )}
       {tab === 'historico' && (
         <article className="card">
           {(history ?? []).map((item) => (
             <p key={`${item.filename}-${item.createdAt}`}>
-              {item.createdAt.slice(0, 10)} · {item.filename} · gerado por {item.createdBy}
+              {item.createdAt.slice(0, 10)} · {item.filename} · {t('rep.by')} {item.createdBy}
             </p>
           ))}
-          {!history?.length && <p className="muted">Nenhum relatório gerado ainda.</p>}
+          {!history?.length && <p className="muted">{t('rep.empty')}</p>}
         </article>
       )}
     </section>

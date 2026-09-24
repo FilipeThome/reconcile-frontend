@@ -26,8 +26,8 @@ export const DEFAULT_FILTERS: Filters = {
   gateway: '',
 }
 
-export const MARKETPLACES: Marketplace[] = ['Mercado Livre', 'CSV', 'Shopee']
-export const GATEWAYS = ['Mercado Pago', 'CSV', 'Shopee'] as const
+export const MARKETPLACES: Marketplace[] = ['Mercado Livre', 'CSV', 'Shopee', 'Amazon']
+export const GATEWAYS = ['Mercado Pago', 'CSV', 'Shopee', 'Amazon'] as const
 
 export function isValidIsoDate(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false

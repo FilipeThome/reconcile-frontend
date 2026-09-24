@@ -25,7 +25,7 @@ describe('StatusBadge', () => {
     expect(screen.getByText('Autorizada')).toBeInTheDocument()
 
     rerender(<StatusBadge kind="plain" value="ativa" />)
-    expect(screen.getByText('ativa')).toBeInTheDocument()
+    expect(screen.getByText('Ativa')).toBeInTheDocument()
 
     rerender(<StatusBadge kind="impact" value="desconhecido" />)
     expect(screen.getByText('desconhecido')).toBeInTheDocument()
