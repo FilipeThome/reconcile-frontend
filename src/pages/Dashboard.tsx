@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { QueryStatus } from '../api/hooks'
+import { BarFill } from '../components/BarFill'
 import { KpiCard } from '../components/KpiCard'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
@@ -69,13 +70,13 @@ export function Dashboard() {
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-          <p className="muted" style={{ textAlign: 'center' }}>
+          <p className="muted text-center">
             {view.kpis.orders.toLocaleString('pt-BR')} pedidos no período
           </p>
         </article>
       </div>
 
-      <div className="grid-2" style={{ marginTop: 12 }}>
+      <div className="grid-2 mt-12">
         <article className="card">
           <div className="card-head">
             <h2>Fila que exige ação hoje</h2>
@@ -140,7 +141,7 @@ export function Dashboard() {
                 <div className="bar-row" key={item.cause}>
                   <span>{item.cause}</span>
                   <div className="bar-track">
-                    <div className="bar-fill" style={{ width: `${item.pct}%` }} />
+                    <BarFill pct={item.pct} />
                   </div>
                   <strong>{formatBRL(item.value)}</strong>
                 </div>

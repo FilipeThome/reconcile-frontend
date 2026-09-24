@@ -58,12 +58,13 @@ export function clearSession() {
 
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   const session = loadSession()
+  const isLogin = path === '/auth/login'
   const headers = new Headers(options.headers)
   if (!headers.has('Content-Type') && options.body) {
     headers.set('Content-Type', 'application/json')
   }
-  if (session?.token) headers.set('Authorization', `Bearer ${session.token}`)
-  if (session?.tenantId) headers.set('X-Tenant-Id', session.tenantId)
+  if (!isLogin && session?.token) headers.set('Authorization', `Bearer ${session.token}`)
+  if (!isLogin && session?.tenantId) headers.set('X-Tenant-Id', session.tenantId)
 
   let response: Response
   try {
@@ -72,7 +73,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     throw new ApiError(0, 'NETWORK', 'Não foi possível conectar ao backend.')
   }
 
-  if (response.status === 401) {
+  if (response.status === 401 && !isLogin) {
     clearSession()
     window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT))
     throw new ApiError(401, 'UNAUTHORIZED', 'Sessão expirada. Entre novamente.')
