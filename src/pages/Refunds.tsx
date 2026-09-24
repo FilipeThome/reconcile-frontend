@@ -1,19 +1,33 @@
+import { useMemo } from 'react'
+import { QueryStatus } from '../api/hooks'
 import { DataTable } from '../components/DataTable'
 import { PageHeader } from '../components/PageHeader'
-import { refunds } from '../data/mock'
+import { useAppState } from '../context/AppState'
+import { useFilters } from '../context/FilterContext'
+import { inPeriod } from '../lib/filters'
 import { formatBRL, formatDateTime } from '../lib/format'
 import type { Refund } from '../types'
 
 export function Refunds() {
+  const { filters } = useFilters()
+  const { error, loading, orders, refunds } = useAppState()
+  const rows = useMemo(() => {
+    const marketplaceByOrder = new Map(orders.map((item) => [item.id, item.marketplace]))
+    return refunds.filter(
+      (item) => inPeriod(item.date, filters) && (!filters.marketplace || marketplaceByOrder.get(item.orderId) === filters.marketplace),
+    )
+  }, [filters, orders, refunds])
+
   return (
     <section>
       <PageHeader
         title="Reembolsos e chargebacks"
         subtitle="Estorno sem reflexo no settlement ou no fechamento abre caso de consistência."
       />
+      <QueryStatus loading={loading} error={error} />
       <article className="card">
         <DataTable<Refund>
-          rows={refunds}
+          rows={rows}
           rowKey={(row) => row.id}
           columns={[
             { key: 'id', header: 'ID', render: (row) => row.id },

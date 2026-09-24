@@ -1,23 +1,40 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { parseComponents } from '../api/client'
+import { useApi } from '../api/hooks'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
-import { caseTimelines, snapshots } from '../data/mock'
+import { useAuth } from '../context/AuthContext'
 import { causeLabel, formatBRL, formatDateTime } from '../lib/format'
+import type { CalculationSnapshot, Comment, ReconciliationCase, TimelineEvent } from '../types'
+
+type CaseDetail = ReconciliationCase & {
+  comments?: Comment[]
+  timeline?: TimelineEvent[]
+  calculation?: CalculationSnapshot & { components?: unknown }
+}
 
 export function DiscrepancyDetail() {
   const { id } = useParams()
-  const { cases, comments, updateCaseStatus, addComment, showToast } = useAppState()
-  const item = cases.find((row) => row.id === id)
+  const { session } = useAuth()
+  const { cases, comments, snapshots, timelines, updateCaseStatus, addComment, reprocessCase } = useAppState()
+  const { data, error, loading } = useApi<CaseDetail>(session && id ? `/cases/${id}` : null)
+  const item = data ?? cases.find((row) => row.id === id)
   const [tab, setTab] = useState('resumo')
   const [text, setText] = useState('')
 
-  if (!item) return <p>Caso não encontrado neste protótipo.</p>
+  if (loading && !item) return <p className="muted">Carregando caso…</p>
+  if (!item) return <p className="muted">{error ?? 'Caso não encontrado.'}</p>
 
-  const snapshot = snapshots.find((row) => row.orderId === item.orderId)
-  const timeline = caseTimelines[item.id] ?? []
-  const caseComments = comments.filter((row) => row.caseId === item.id)
+  const snapshot = data?.calculation
+    ? {
+        ...data.calculation,
+        components: parseComponents(data.calculation.components),
+      }
+    : snapshots.find((row) => row.orderId === item.orderId)
+  const timeline = data?.timeline ?? timelines[item.id] ?? []
+  const caseComments = data?.comments ?? comments.filter((row) => row.caseId === item.id)
 
   return (
     <section>
@@ -42,7 +59,7 @@ export function DiscrepancyDetail() {
             <StatusBadge kind="impact" value={item.impact} />
           </p>
           <p>Responsável: {item.owner}</p>
-          <p>Confiança do matching: {(item.confidence * 100).toFixed(0)}%</p>
+          <p>Confiança do matching: {(Number(item.confidence) * 100).toFixed(0)}%</p>
           <p className="muted">{item.description}</p>
         </article>
         <article className="card">
@@ -132,7 +149,7 @@ export function DiscrepancyDetail() {
                 </div>
               </div>
             ))}
-            {timeline.length === 0 && <p className="muted">Timeline detalhada disponível nos casos piloto 124 e 125.</p>}
+            {timeline.length === 0 && <p className="muted">Ainda não há eventos de timeline para este caso.</p>}
           </div>
         )}
 
@@ -159,7 +176,7 @@ export function DiscrepancyDetail() {
               >
                 Comentar
               </button>
-              <button type="button" className="btn" onClick={() => showToast('Reprocessamento simulado. Sem backend nesta versão.')}>
+              <button type="button" className="btn" onClick={() => reprocessCase(item.id)}>
                 Reprocessar caso
               </button>
             </div>

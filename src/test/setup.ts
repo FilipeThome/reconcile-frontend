@@ -1,10 +1,15 @@
 import { cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
-import { afterEach } from 'vitest'
+import { afterEach, vi } from 'vitest'
+import { clearSession } from '../api/client'
+import { mockFetch } from './mockApi'
 
 afterEach(() => {
   cleanup()
+  clearSession()
 })
+
+vi.stubGlobal('fetch', mockFetch)
 
 class ResizeObserverMock {
   observe() {}
