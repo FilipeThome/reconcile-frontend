@@ -22,7 +22,7 @@ export function Rules() {
             {rules.map((rule) => (
               <tr key={rule.id}>
                 <td>{rule.name}</td>
-                <td style={{ whiteSpace: 'normal', maxWidth: 480 }}>{rule.description}</td>
+                <td className="cell-wrap">{rule.description}</td>
                 <td>{rule.type}</td>
                 <td>
                   <StatusBadge kind="plain" value={rule.active ? 'ativa' : 'disponivel'} />

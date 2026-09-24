@@ -102,8 +102,7 @@ export function Layout() {
             </span>
             <button
               type="button"
-              className="btn"
-              style={{ marginTop: 10, width: '100%' }}
+              className="btn mt-10 w-full"
               onClick={() => {
                 logout()
                 navigate('/login')

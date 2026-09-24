@@ -100,7 +100,7 @@ export function OrderDetail() {
       </div>
 
       {snapshot && (
-        <article className="card" style={{ marginTop: 12 }}>
+        <article className="card mt-12">
           <h2>Snapshot do cálculo ({snapshot.version})</h2>
           <p>Gross {formatBRL(snapshot.gross)}</p>
           {snapshot.components.map((item) => (

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BarFill } from '../components/BarFill'
 import { KpiCard } from '../components/KpiCard'
 import { PageHeader } from '../components/PageHeader'
 import { useAppState } from '../context/AppState'
@@ -17,7 +18,7 @@ export function CalculationEngine() {
         title="Motor de cálculo"
         subtitle="Determinístico, versionado e explicável. Cada reconciliação guarda um snapshot reproduzível."
       />
-      <div className="grid-4" style={{ marginBottom: 16 }}>
+      <div className="grid-4 mb-16">
         <KpiCard label="Cálculos no período" value={(engine?.calculations ?? snapshots.length).toLocaleString('pt-BR')} />
         <KpiCard label="Ajustes identificados" value={String(components.length)} />
         <KpiCard label="Versão ativa" value={engine?.version ?? 'sce-v1.4'} />
@@ -76,7 +77,7 @@ export function CalculationEngine() {
               <div className="bar-row" key={item.label}>
                 <span>{item.label}</span>
                 <div className="bar-track">
-                  <div className="bar-fill" style={{ width: `${item.pct}%` }} />
+                  <BarFill pct={item.pct} />
                 </div>
                 <strong>{formatBRL(item.amount)}</strong>
               </div>
