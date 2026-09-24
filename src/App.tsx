@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { RequireAuth } from './components/RequireAuth'
 import { AppStateProvider } from './context/AppState'
+import { LocaleProvider } from './context/LocaleContext'
 import { AuthProvider } from './context/AuthContext'
 import { DataSync } from './context/DataSync'
 import { FilterProvider } from './context/FilterContext'
@@ -27,6 +28,7 @@ import { Settlements } from './pages/Settlements'
 
 export default function App() {
   return (
+    <LocaleProvider>
     <AuthProvider>
       <FilterProvider>
         <AppStateProvider>
@@ -62,5 +64,6 @@ export default function App() {
         </AppStateProvider>
       </FilterProvider>
     </AuthProvider>
+    </LocaleProvider>
   )
 }

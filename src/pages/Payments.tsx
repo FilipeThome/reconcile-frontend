@@ -7,6 +7,7 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { inPeriod } from '../lib/filters'
+import { labelOf, t } from '../i18n/locale'
 import { formatBRL, formatDateTime } from '../lib/format'
 import type { Payment } from '../types'
 
@@ -33,10 +34,10 @@ export function Payments() {
 
   return (
     <section>
-      <PageHeader title="Pagamentos" subtitle="Payment é distinto de settlement e de payout. Eventos podem chegar fora de ordem." />
+      <PageHeader title={t('pay.title')} subtitle={t('pay.subtitle')} />
       <QueryStatus loading={loading} error={error} />
       <div className="toolbar">
-        <input className="field" placeholder="Buscar pagamento ou pedido" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input className="field" placeholder={t('pay.search')} value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
       <article className="card">
         <DataTable<Payment>
@@ -44,16 +45,16 @@ export function Payments() {
           rowKey={(row) => row.id}
           onRowClick={(row) => navigate(`/pedidos/${row.orderId}`)}
           columns={[
-            { key: 'id', header: 'Pagamento', render: (row) => <span className="linkish">{row.id}</span> },
-            { key: 'order', header: 'Pedido', render: (row) => row.orderId },
-            { key: 'date', header: 'Data', render: (row) => formatDateTime(row.date) },
-            { key: 'gw', header: 'Gateway', render: (row) => row.gateway },
-            { key: 'method', header: 'Método', render: (row) => row.method },
-            { key: 'gross', header: 'Bruto', render: (row) => formatBRL(row.grossAmount) },
-            { key: 'fees', header: 'Taxas', render: (row) => formatBRL(row.fees) },
-            { key: 'net', header: 'Líquido', render: (row) => formatBRL(row.netAmount) },
-            { key: 'st', header: 'Status', render: (row) => <StatusBadge kind="plain" value={row.status} /> },
-            { key: 'rec', header: 'Situação', render: (row) => <StatusBadge kind="recon" value={row.reconciliation} /> },
+            { key: 'id', header: t('pay.payment'), render: (row) => <span className="linkish">{row.id}</span> },
+            { key: 'order', header: t('common.order'), render: (row) => row.orderId },
+            { key: 'date', header: t('common.date'), render: (row) => formatDateTime(row.date) },
+            { key: 'gw', header: t('common.gateway'), render: (row) => row.gateway },
+            { key: 'method', header: t('pay.method'), render: (row) => labelOf(row.method) },
+            { key: 'gross', header: t('pay.gross'), render: (row) => formatBRL(row.grossAmount) },
+            { key: 'fees', header: t('pay.fees'), render: (row) => formatBRL(row.fees) },
+            { key: 'net', header: t('pay.net'), render: (row) => formatBRL(row.netAmount) },
+            { key: 'st', header: t('common.status'), render: (row) => <StatusBadge kind="plain" value={row.status} /> },
+            { key: 'rec', header: t('common.situation'), render: (row) => <StatusBadge kind="recon" value={row.reconciliation} /> },
           ]}
         />
       </article>

@@ -1,20 +1,21 @@
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
+import { t } from '../i18n/locale'
 
 export function Rules() {
   const { rules, toggleRule } = useAppState()
   return (
     <section>
-      <PageHeader title="Regras de reconciliação" subtitle="As cinco regras prioritárias do piloto Mercado Livre + Mercado Pago + CSV." />
+      <PageHeader title={t('rules.title')} subtitle={t('rules.subtitle')} />
       <article className="card">
         <table>
           <thead>
             <tr>
-              <th>Regra</th>
-              <th>Descrição</th>
-              <th>Tipo</th>
-              <th>Status</th>
+              <th>{t('rules.rule')}</th>
+              <th>{t('rules.description')}</th>
+              <th>{t('rules.type')}</th>
+              <th>{t('common.status')}</th>
               <th></th>
             </tr>
           </thead>
