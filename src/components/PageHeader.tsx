@@ -2,7 +2,9 @@ import { CalendarRange, RefreshCw, X } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
+import { useLocale } from '../context/LocaleContext'
 import { countActiveFilters, GATEWAYS, MARKETPLACES, PERIOD_PRESETS } from '../lib/filters'
+import type { MessageKey } from '../i18n/locale'
 
 type Props = {
   title: string
@@ -13,6 +15,7 @@ type Props = {
 
 export function PageHeader({ title, subtitle, children, showPeriod = true }: Props) {
   const { showToast } = useAppState()
+  const { t } = useLocale()
   const { filters, draft, periodLabel, panelOpen, setDraft, applyDraft, resetFilters, openPanel, closePanel, refresh } =
     useFilters()
   const extra = countActiveFilters(filters)
@@ -48,19 +51,19 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
             </button>
             {panelOpen && (
               <>
-                <button type="button" className="filter-backdrop" aria-label="Fechar filtros" onClick={closePanel} />
-                <div className="filter-panel" role="dialog" aria-label="Filtros do recorte">
+                <button type="button" className="filter-backdrop" aria-label={t('filter.close')} onClick={closePanel} />
+                <div className="filter-panel" role="dialog" aria-label={t('filter.title')}>
                   <div className="card-head">
-                    <h3>Recorte operacional</h3>
-                    <button type="button" className="btn-ghost btn" onClick={closePanel} aria-label="Fechar">
+                    <h3>{t('filter.title')}</h3>
+                    <button type="button" className="btn-ghost btn" onClick={closePanel} aria-label={t('filter.dismiss')}>
                       <X size={14} />
                     </button>
                   </div>
                 <label className="filter-field">
-                  <span>Período</span>
+                  <span>{t('filter.period')}</span>
                   <select
                     className="select"
-                    aria-label="Período"
+                    aria-label={t('filter.period')}
                     value={PERIOD_PRESETS.find((item) => item.from === draft.from && item.to === draft.to)?.id ?? 'custom'}
                     onChange={(event) => {
                       const preset = PERIOD_PRESETS.find((item) => item.id === event.target.value)
@@ -70,15 +73,15 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
                   >
                     {PERIOD_PRESETS.map((item) => (
                       <option key={item.id} value={item.id}>
-                        {item.label}
+                        {t(`period.${item.id}` as MessageKey)}
                       </option>
                     ))}
-                    <option value="custom">Personalizado</option>
+                    <option value="custom">{t('filter.custom')}</option>
                   </select>
                 </label>
                 <div className="filter-dates">
                   <label className="filter-field">
-                    <span>De</span>
+                    <span>{t('filter.from')}</span>
                     <input
                       className="field"
                       type="date"
@@ -87,7 +90,7 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
                     />
                   </label>
                   <label className="filter-field">
-                    <span>Até</span>
+                    <span>{t('filter.to')}</span>
                     <input
                       className="field"
                       type="date"
@@ -97,16 +100,16 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
                   </label>
                 </div>
                 <label className="filter-field">
-                  <span>Marketplace</span>
+                  <span>{t('filter.marketplace')}</span>
                   <select
                     className="select"
-                    aria-label="Marketplace"
+                    aria-label={t('filter.marketplace')}
                     value={draft.marketplace}
                     onChange={(event) =>
                       setDraft((current) => ({ ...current, marketplace: event.target.value as typeof current.marketplace }))
                     }
                   >
-                    <option value="">Todos</option>
+                    <option value="">{t('filter.all')}</option>
                     {MARKETPLACES.map((item) => (
                       <option key={item} value={item}>
                         {item}
@@ -115,14 +118,14 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
                   </select>
                 </label>
                 <label className="filter-field">
-                  <span>Gateway</span>
+                  <span>{t('filter.gateway')}</span>
                   <select
                     className="select"
-                    aria-label="Gateway"
+                    aria-label={t('filter.gateway')}
                     value={draft.gateway}
                     onChange={(event) => setDraft((current) => ({ ...current, gateway: event.target.value as typeof current.gateway }))}
                   >
-                    <option value="">Todos</option>
+                    <option value="">{t('filter.all')}</option>
                     {GATEWAYS.map((item) => (
                       <option key={item} value={item}>
                         {item}
@@ -132,10 +135,10 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
                 </label>
                 <div className="row-actions">
                   <button type="button" className="btn-primary btn" onClick={applyDraft}>
-                    Aplicar
+                    {t('filter.apply')}
                   </button>
                   <button type="button" className="btn" onClick={resetFilters}>
-                    Limpar
+                    {t('filter.clear')}
                   </button>
                 </div>
                 </div>
@@ -148,11 +151,11 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
           className="btn"
           onClick={() => {
             refresh()
-            showToast('Dados atualizados para o recorte selecionado.')
+            showToast(t('filter.refreshed'))
           }}
         >
           <RefreshCw size={14} />
-          Atualizar
+          {t('filter.refresh')}
         </button>
         {children}
       </div>

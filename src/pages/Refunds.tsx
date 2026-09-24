@@ -5,6 +5,7 @@ import { PageHeader } from '../components/PageHeader'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { inPeriod } from '../lib/filters'
+import { labelOf, t } from '../i18n/locale'
 import { formatBRL, formatDateTime } from '../lib/format'
 import type { Refund } from '../types'
 
@@ -21,8 +22,8 @@ export function Refunds() {
   return (
     <section>
       <PageHeader
-        title="Reembolsos e chargebacks"
-        subtitle="Estorno sem reflexo no settlement ou no fechamento abre caso de consistência."
+        title={t('ref.title')}
+        subtitle={t('ref.subtitle')}
       />
       <QueryStatus loading={loading} error={error} />
       <article className="card">
@@ -30,13 +31,13 @@ export function Refunds() {
           rows={rows}
           rowKey={(row) => row.id}
           columns={[
-            { key: 'id', header: 'ID', render: (row) => row.id },
-            { key: 'order', header: 'Pedido', render: (row) => row.orderId },
-            { key: 'type', header: 'Tipo', render: (row) => row.type },
-            { key: 'date', header: 'Data', render: (row) => formatDateTime(row.date) },
-            { key: 'amount', header: 'Valor', render: (row) => formatBRL(row.amount) },
-            { key: 'ref', header: 'Refletido no settlement', render: (row) => (row.reflectedInSettlement ? 'Sim' : 'Não') },
-            { key: 'st', header: 'Situação', render: (row) => row.status },
+            { key: 'id', header: t('common.id'), render: (row) => row.id },
+            { key: 'order', header: t('common.order'), render: (row) => row.orderId },
+            { key: 'type', header: t('ref.type'), render: (row) => labelOf(row.type) },
+            { key: 'date', header: t('common.date'), render: (row) => formatDateTime(row.date) },
+            { key: 'amount', header: t('common.amount'), render: (row) => formatBRL(row.amount) },
+            { key: 'ref', header: t('ref.reflected'), render: (row) => (row.reflectedInSettlement ? t('ref.yes') : t('ref.no')) },
+            { key: 'st', header: t('common.situation'), render: (row) => labelOf(row.status) },
           ]}
         />
       </article>

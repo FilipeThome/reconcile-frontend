@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { t } from '../i18n/locale'
 
 type Props = { children: ReactNode }
 type State = { error: Error | null }
@@ -18,10 +19,10 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.error) return this.props.children
     return (
       <section className="error-boundary" role="alert">
-        <h1>Algo deu errado</h1>
-        <p className="muted">{this.state.error.message || 'Falha inesperada na interface.'}</p>
+        <h1>{t('error.title')}</h1>
+        <p className="muted">{this.state.error.message || t('error.unexpected')}</p>
         <button type="button" className="btn-primary btn" onClick={() => this.setState({ error: null })}>
-          Tentar novamente
+          {t('error.retry')}
         </button>
       </section>
     )

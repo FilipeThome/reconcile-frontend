@@ -7,6 +7,7 @@ import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
 import { inPeriod } from '../lib/filters'
+import { t } from '../i18n/locale'
 import { formatBRL, formatDate } from '../lib/format'
 import type { Settlement } from '../types'
 
@@ -29,8 +30,8 @@ export function Settlements() {
   return (
     <section>
       <PageHeader
-        title="Liquidações"
-        subtitle="Settlement é o valor esperado liquidável, calculado de forma determinística e versionada."
+        title={t('stl.title')}
+        subtitle={t('stl.subtitle')}
       />
       <QueryStatus loading={loading} error={error} />
       <article className="card">
@@ -40,13 +41,13 @@ export function Settlements() {
           onRowClick={(row) => navigate(`/pedidos/${row.orderId}`)}
           columns={[
             { key: 'id', header: 'Settlement', render: (row) => <span className="linkish">{row.id}</span> },
-            { key: 'order', header: 'Pedido', render: (row) => row.orderId },
-            { key: 'pay', header: 'Pagamento', render: (row) => row.paymentId },
-            { key: 'date', header: 'Data', render: (row) => formatDate(row.date) },
-            { key: 'exp', header: 'Esperado', render: (row) => formatBRL(row.expectedNet) },
-            { key: 'act', header: 'Recebido', render: (row) => (row.actualNet === null ? '—' : formatBRL(row.actualNet)) },
-            { key: 'snap', header: 'Snapshot', render: (row) => row.snapshotId },
-            { key: 'st', header: 'Situação', render: (row) => <StatusBadge kind="recon" value={row.status} /> },
+            { key: 'order', header: t('common.order'), render: (row) => row.orderId },
+            { key: 'pay', header: t('pay.payment'), render: (row) => row.paymentId },
+            { key: 'date', header: t('common.date'), render: (row) => formatDate(row.date) },
+            { key: 'exp', header: t('stl.expected'), render: (row) => formatBRL(row.expectedNet) },
+            { key: 'act', header: t('stl.received'), render: (row) => (row.actualNet === null ? '—' : formatBRL(row.actualNet)) },
+            { key: 'snap', header: t('stl.snapshot'), render: (row) => row.snapshotId },
+            { key: 'st', header: t('common.situation'), render: (row) => <StatusBadge kind="recon" value={row.status} /> },
           ]}
         />
       </article>

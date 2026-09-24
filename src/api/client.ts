@@ -1,3 +1,5 @@
+import { t } from '../i18n/locale'
+
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
 const SESSION_KEY = 'reconcile.session'
 export const SESSION_EXPIRED_EVENT = 'reconcile:unauthorized'
@@ -70,13 +72,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   try {
     response = await fetch(`${API_BASE}${path}`, { ...options, headers })
   } catch {
-    throw new ApiError(0, 'NETWORK', 'Não foi possível conectar ao backend.')
+    throw new ApiError(0, 'NETWORK', t('error.network'))
   }
 
   if (response.status === 401 && !isLogin) {
     clearSession()
     window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT))
-    throw new ApiError(401, 'UNAUTHORIZED', 'Sessão expirada. Entre novamente.')
+    throw new ApiError(401, 'UNAUTHORIZED', t('error.session'))
   }
   if (response.status === 204) return undefined as T
 
@@ -90,7 +92,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     try {
       body = await response.json()
     } catch {
-      throw new ApiError(response.status || 502, 'INVALID_RESPONSE', 'Resposta inválida do backend.')
+      throw new ApiError(response.status || 502, 'INVALID_RESPONSE', t('error.invalid'))
     }
   } else {
     body = await response.text()
@@ -100,8 +102,8 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const code = typeof body === 'object' && body ? String((body as { code?: string }).code ?? 'ERROR') : 'ERROR'
     const message =
       typeof body === 'object' && body
-        ? String((body as { message?: string }).message ?? 'Falha na API')
-        : String(body || 'Falha na API')
+        ? String((body as { message?: string }).message ?? t('error.api'))
+        : String(body || t('error.api'))
     throw new ApiError(response.status, code, message)
   }
   return body as T

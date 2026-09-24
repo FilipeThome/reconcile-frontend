@@ -3,14 +3,15 @@ import { BarFill } from '../components/BarFill'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
-import { formatBRL } from '../lib/format'
+import { t } from '../i18n/locale'
+import { formatBRL, formatCount } from '../lib/format'
 
 export function Closings() {
   const { closings } = useAppState()
   const navigate = useNavigate()
   return (
     <section>
-      <PageHeader title="Fechamentos" subtitle="Ciclo OPEN → CLOSED. Depois de fechado, eventos tardios geram delta auditável." />
+      <PageHeader title={t('clo.title')} subtitle={t('clo.subtitle')} />
       <div className="closing-grid">
         {closings.map((item) => {
           const pct = item.expected === 0 ? 0 : Math.min(100, (item.received / item.expected) * 100)
@@ -20,10 +21,10 @@ export function Closings() {
                 <h3>{item.label}</h3>
                 <StatusBadge kind="closing" value={item.status} />
               </div>
-              <p className="muted">{item.orders.toLocaleString('pt-BR')} pedidos</p>
-              <p>Esperado {formatBRL(item.expected)}</p>
-              <p>Recebido {formatBRL(item.received)}</p>
-              <p>Diferença aberta {formatBRL(item.openDiff)}</p>
+              <p className="muted">{t('clo.orders', { count: formatCount(item.orders) })}</p>
+              <p>{t('clo.expected')} {formatBRL(item.expected)}</p>
+              <p>{t('clo.received')} {formatBRL(item.received)}</p>
+              <p>{t('clo.openDiff')} {formatBRL(item.openDiff)}</p>
               <div className="progress">
                 <BarFill pct={pct} />
               </div>

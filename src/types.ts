@@ -1,5 +1,5 @@
-export type Marketplace = 'Mercado Livre' | 'CSV' | 'Shopee'
-export type Gateway = 'Mercado Pago' | 'CSV' | 'Shopee'
+export type Marketplace = 'Mercado Livre' | 'CSV' | 'Shopee' | 'Amazon'
+export type Gateway = 'Mercado Pago' | 'CSV' | 'Shopee' | 'Amazon'
 
 export type ReconciliationStatus =
   | 'reconciliado'
