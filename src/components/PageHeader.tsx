@@ -1,4 +1,4 @@
-import { CalendarRange, Filter, RefreshCw, X } from 'lucide-react'
+import { CalendarRange, RefreshCw, X } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { useAppState } from '../context/AppState'
 import { useFilters } from '../context/FilterContext'
@@ -34,27 +34,28 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
       </div>
       <div className="header-actions">
         {showPeriod && (
-          <button type="button" className="chip chip-button" onClick={openPanel}>
-            <CalendarRange size={14} />
-            {periodLabel}
-            {extra > 0 && <span className="chip-count">{extra}</span>}
-          </button>
-        )}
-        <div className="filter-anchor">
-          <button type="button" className={`btn${panelOpen ? ' btn-active' : ''}`} onClick={panelOpen ? closePanel : openPanel}>
-            <Filter size={14} />
-            Filtros
-          </button>
-          {panelOpen && (
-            <>
-              <button type="button" className="filter-backdrop" aria-label="Fechar filtros" onClick={closePanel} />
-              <div className="filter-panel" role="dialog" aria-label="Filtros do recorte">
-                <div className="card-head">
-                  <h3>Recorte operacional</h3>
-                  <button type="button" className="btn-ghost btn" onClick={closePanel} aria-label="Fechar">
-                    <X size={14} />
-                  </button>
-                </div>
+          <div className="filter-anchor">
+            <button
+              type="button"
+              className={`chip chip-button${panelOpen ? ' btn-active' : ''}`}
+              onClick={panelOpen ? closePanel : openPanel}
+              aria-expanded={panelOpen}
+              aria-haspopup="dialog"
+            >
+              <CalendarRange size={14} />
+              {periodLabel}
+              {extra > 0 && <span className="chip-count">{extra}</span>}
+            </button>
+            {panelOpen && (
+              <>
+                <button type="button" className="filter-backdrop" aria-label="Fechar filtros" onClick={closePanel} />
+                <div className="filter-panel" role="dialog" aria-label="Filtros do recorte">
+                  <div className="card-head">
+                    <h3>Recorte operacional</h3>
+                    <button type="button" className="btn-ghost btn" onClick={closePanel} aria-label="Fechar">
+                      <X size={14} />
+                    </button>
+                  </div>
                 <label className="filter-field">
                   <span>Período</span>
                   <select
@@ -137,10 +138,11 @@ export function PageHeader({ title, subtitle, children, showPeriod = true }: Pro
                     Limpar
                   </button>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
         <button
           type="button"
           className="btn"
