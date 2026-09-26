@@ -236,6 +236,7 @@ button { cursor: pointer; }
 .btn-danger { background: #fff; color: var(--danger); border-color: #f3c4c4; }
 .btn-ghost { background: transparent; }
 .field { min-width: 220px; }
+.qty-field { width: 96px; min-width: 96px; }
 .select { min-width: 150px; }
 
 .kpi-grid {
