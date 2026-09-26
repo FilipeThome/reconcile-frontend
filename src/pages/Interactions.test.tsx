@@ -27,8 +27,9 @@ describe('page interactions', () => {
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
     const nativeCreate = document.createElement.bind(document)
     vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
-      if (tag === 'a') return { click, href: '', download: '' } as unknown as HTMLAnchorElement
-      return nativeCreate(tag)
+      const element = nativeCreate(tag)
+      if (tag === 'a') element.click = click
+      return element
     })
 
     const orders = renderApp(<Orders />)

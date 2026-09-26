@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { useAppState } from '../context/AppState'
@@ -51,6 +51,11 @@ export function Integrations() {
               >
                 Backfill
               </button>
+              {item.id === 'ml' && item.status === 'ativa' && (
+                <Link className="btn" to="/integracoes/mercado-livre/estoque">
+                  {t('stock.open')}
+                </Link>
+              )}
             </div>
           </article>
         ))}
