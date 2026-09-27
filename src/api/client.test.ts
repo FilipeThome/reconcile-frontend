@@ -125,6 +125,7 @@ describe('api', () => {
     })
     const headers = fetchMock.mock.calls[0]?.[1]?.headers as Headers
     expect(headers.get('Authorization')).toBeNull()
+    expect(headers.get('Accept-Language')).toBe('pt-BR')
     expect(expired).not.toHaveBeenCalled()
     expect(loadSession()).toEqual(testSession)
     window.removeEventListener(SESSION_EXPIRED_EVENT, expired)
@@ -140,6 +141,7 @@ describe('api', () => {
     const headers = fetchMock.mock.calls[0]?.[1]?.headers as Headers
     expect(headers.get('Authorization')).toBe('Bearer test-token')
     expect(headers.get('X-Tenant-Id')).toBe('ten_8f2c1a')
+    expect(headers.get('Accept-Language')).toBe('pt-BR')
     expect(headers.get('Content-Type')).toBe('application/json')
   })
 })

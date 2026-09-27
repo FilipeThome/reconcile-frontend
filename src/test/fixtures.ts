@@ -406,6 +406,57 @@ export const orders: Order[] = [
     invoiceId: null,
     caseId: 'DIV-2026-000135',
   },
+  {
+    id: 'PED-200001400',
+    date: '2026-05-06T15:10:00',
+    buyer: 'Laura Bennett',
+    marketplace: 'Amazon',
+    items: 1,
+    grossAmount: 259.9,
+    expectedNet: 207.92,
+    actualNet: 207.92,
+    status: 'pago',
+    reconciliation: 'reconciliado',
+    paymentId: 'PAY-AMZ-01',
+    settlementId: 'SET-AMZ-01',
+    payoutId: 'REP-AMZ-01',
+    invoiceId: 'NFE-100140',
+    caseId: null,
+  },
+  {
+    id: 'PED-200001401',
+    date: '2026-05-19T18:42:00',
+    buyer: 'Miguel Andrade',
+    marketplace: 'Amazon',
+    items: 2,
+    grossAmount: 480,
+    expectedNet: 408,
+    actualNet: 378,
+    status: 'pago',
+    reconciliation: 'divergente',
+    paymentId: 'PAY-AMZ-02',
+    settlementId: 'SET-AMZ-02',
+    payoutId: 'REP-AMZ-02',
+    invoiceId: 'NFE-100141',
+    caseId: 'DIV-2026-000140',
+  },
+  {
+    id: 'PED-200001402',
+    date: '2026-05-27T11:05:00',
+    buyer: 'Sofia Martins',
+    marketplace: 'Amazon',
+    items: 1,
+    grossAmount: 129,
+    expectedNet: 103.2,
+    actualNet: null,
+    status: 'pago',
+    reconciliation: 'pendente_liquidacao',
+    paymentId: 'PAY-AMZ-03',
+    settlementId: 'SET-AMZ-03',
+    payoutId: 'REP-AMZ-03',
+    invoiceId: null,
+    caseId: null,
+  },
 ]
 
 export const payments: Payment[] = [
@@ -425,6 +476,9 @@ export const payments: Payment[] = [
   { id: 'PAY-41300', orderId: 'PED-200001300', date: '2026-06-03T10:06:00', gateway: 'Mercado Pago', method: 'Pix', grossAmount: 199.9, fees: 1.99, netAmount: 197.91, status: 'aprovado', reconciliation: 'reconciliado' },
   { id: 'PAY-SHP-01', orderId: 'PED-200001301', date: '2026-06-08T13:19:00', gateway: 'Shopee', method: 'Cartão', grossAmount: 318, fees: 8.4, netAmount: 309.6, status: 'aprovado', reconciliation: 'divergente' },
   { id: 'PAY-SHP-02', orderId: 'PED-200001302', date: '2026-06-12T19:45:00', gateway: 'Shopee', method: 'Pix', grossAmount: 89.9, fees: 1.8, netAmount: 88.1, status: 'aprovado', reconciliation: 'pendente_liquidacao' },
+  { id: 'PAY-AMZ-01', orderId: 'PED-200001400', date: '2026-05-06T15:11:00', gateway: 'Amazon', method: 'Cartão', grossAmount: 259.9, fees: 6.5, netAmount: 253.4, status: 'aprovado', reconciliation: 'reconciliado' },
+  { id: 'PAY-AMZ-02', orderId: 'PED-200001401', date: '2026-05-19T18:43:00', gateway: 'Amazon', method: 'Cartão', grossAmount: 480, fees: 12, netAmount: 468, status: 'aprovado', reconciliation: 'divergente' },
+  { id: 'PAY-AMZ-03', orderId: 'PED-200001402', date: '2026-05-27T11:06:00', gateway: 'Amazon', method: 'Pix', grossAmount: 129, fees: 3.2, netAmount: 125.8, status: 'aprovado', reconciliation: 'pendente_liquidacao' },
   { id: 'PAY-41303', orderId: 'PED-200001303', date: '2026-06-18T08:31:00', gateway: 'Mercado Pago', method: 'Boleto', grossAmount: 275, fees: 6.9, netAmount: 268.1, status: 'aprovado', reconciliation: 'divergente' },
 ]
 
@@ -437,6 +491,9 @@ export const settlements: Settlement[] = [
   { id: 'SET-55140', paymentId: 'PAY-88460', orderId: 'PED-200001240', date: '2026-05-27T00:00:00', expectedNet: 748.9, actualNet: 748.9, status: 'reconciliado', snapshotId: 'SNAP-006' },
   { id: 'SET-CSV-12', paymentId: 'PAY-CSV-12', orderId: 'PED-200001241', date: '2026-05-24T00:00:00', expectedNet: 178.5, actualNet: 176.2, status: 'reconciliado_alerta', snapshotId: 'SNAP-007' },
   { id: 'SET-55160', paymentId: 'PAY-88490', orderId: 'PED-200001243', date: '2026-06-02T00:00:00', expectedNet: 361.2, actualNet: 331.2, status: 'divergente', snapshotId: 'SNAP-008' },
+  { id: 'SET-AMZ-01', paymentId: 'PAY-AMZ-01', orderId: 'PED-200001400', date: '2026-05-12T00:00:00', expectedNet: 207.92, actualNet: 207.92, status: 'reconciliado', snapshotId: 'SNAP-140' },
+  { id: 'SET-AMZ-02', paymentId: 'PAY-AMZ-02', orderId: 'PED-200001401', date: '2026-05-25T00:00:00', expectedNet: 408, actualNet: 378, status: 'divergente', snapshotId: 'SNAP-141' },
+  { id: 'SET-AMZ-03', paymentId: 'PAY-AMZ-03', orderId: 'PED-200001402', date: '2026-05-29T00:00:00', expectedNet: 103.2, actualNet: null, status: 'pendente_liquidacao', snapshotId: null },
 ]
 
 export const payouts: Payout[] = [
@@ -446,6 +503,9 @@ export const payouts: Payout[] = [
   { id: 'REP-CSV-03', gateway: 'CSV', date: '2026-05-24T09:00:00', grossAmount: 210, fees: 33.8, netAmount: 176.2, status: 'concluido', reconciliation: 'reconciliado_alerta', orderIds: ['PED-200001241'] },
   { id: 'REP-33016', gateway: 'Mercado Pago', date: '2026-06-02T06:00:00', grossAmount: 430, fees: 98.8, netAmount: 331.2, status: 'concluido', reconciliation: 'divergente', orderIds: ['PED-200001243'] },
   { id: 'REP-33020', gateway: 'Mercado Pago', date: '2026-06-05T06:00:00', grossAmount: 1642.5, fees: 252.1, netAmount: 1390.4, status: 'previsto', reconciliation: 'pendente_liquidacao', orderIds: ['PED-200001234', 'PED-200001236'] },
+  { id: 'REP-AMZ-01', gateway: 'Amazon', date: '2026-05-12T08:00:00', grossAmount: 259.9, fees: 51.98, netAmount: 207.92, status: 'concluido', reconciliation: 'reconciliado', orderIds: ['PED-200001400'] },
+  { id: 'REP-AMZ-02', gateway: 'Amazon', date: '2026-05-25T08:00:00', grossAmount: 480, fees: 102, netAmount: 378, status: 'concluido', reconciliation: 'divergente', orderIds: ['PED-200001401'] },
+  { id: 'REP-AMZ-03', gateway: 'Amazon', date: '2026-06-03T08:00:00', grossAmount: 129, fees: 25.8, netAmount: 103.2, status: 'previsto', reconciliation: 'pendente_liquidacao', orderIds: ['PED-200001402'] },
 ]
 
 export const fees: Fee[] = [
@@ -473,6 +533,8 @@ export const invoices: Invoice[] = [
   { id: 'NFE-100240', orderId: 'PED-200001240', type: 'NF-e', number: '000240', key: '35260512345678000199550010000002401000024010', issuedAt: '2026-05-20T16:00:00', total: 890, status: 'autorizada', cbs: 78.3, ibs: 16 },
   { id: 'NFE-100241', orderId: 'PED-200001241', type: 'NF-e', number: '000241', key: '35260512345678000199550010000002411000024110', issuedAt: '2026-05-21T11:00:00', total: 219.9, status: 'autorizada', cbs: 19.3, ibs: 4 },
   { id: 'NFE-100243', orderId: 'PED-200001243', type: 'NF-e', number: '000243', key: '35260512345678000199550010000002431000024310', issuedAt: '2026-05-28T17:40:00', total: 410, status: 'autorizada', cbs: 36.1, ibs: 7.4 },
+  { id: 'NFE-100140', orderId: 'PED-200001400', type: 'NF-e', number: '000140', key: '35260512345678000199550010000001401000014010', issuedAt: '2026-05-06T18:00:00', total: 259.9, status: 'autorizada', cbs: 22.8, ibs: 4.7 },
+  { id: 'NFE-100141', orderId: 'PED-200001401', type: 'NF-e', number: '000141', key: '35260512345678000199550010000001411000014110', issuedAt: '2026-05-19T20:10:00', total: 480, status: 'autorizada', cbs: 42.2, ibs: 8.6 },
 ]
 
 export const initialCases: ReconciliationCase[] = [
@@ -697,6 +759,26 @@ export const initialCases: ReconciliationCase[] = [
     suggestedAction: 'Mapear a tarifa Shopee no dicionário de componentes.',
   },
   {
+    id: 'DIV-2026-000140',
+    openedAt: '2026-05-25T09:30:00',
+    orderId: 'PED-200001401',
+    paymentId: 'PAY-AMZ-02',
+    settlementId: 'SET-AMZ-02',
+    payoutId: 'REP-AMZ-02',
+    invoiceId: 'NFE-100141',
+    cause: 'tarifa_inesperada',
+    description: 'Amazon reteve R$ 30,00 de tarifa de indicação não mapeada no motor.',
+    amount: 30,
+    recoverable: 30,
+    confirmedLoss: 0,
+    impact: 'recuperavel',
+    status: 'aberta',
+    priority: 'alta',
+    owner: 'Ana Dantas',
+    confidence: 0.91,
+    suggestedAction: 'Mapear a referral fee da Amazon no dicionário de componentes.',
+  },
+  {
     id: 'DIV-2026-000135',
     openedAt: '2026-06-20T11:00:00',
     orderId: 'PED-200001303',
@@ -785,6 +867,7 @@ export const initialIntegrations: Integration[] = [
   { id: 'mp', name: 'Mercado Pago', kind: 'gateway', status: 'ativa', lastSync: '2026-05-31T14:15:00', detail: 'Webhooks + consulta idempotente de detalhe' },
   { id: 'csv', name: 'Importação CSV', kind: 'importacao', status: 'ativa', lastSync: '2026-05-21T08:02:00', detail: 'Adapter genérico para pedidos, pagamentos e tarifas' },
   { id: 'shopee', name: 'Shopee', kind: 'marketplace', status: 'ativa', lastSync: '2026-06-18T11:00:00', detail: 'OAuth seller SHP-44120 · piloto junho/2026' },
+  { id: 'amazon', name: 'Amazon', kind: 'marketplace', status: 'ativa', lastSync: '2026-05-31T16:00:00', detail: 'Seller A1AMZDEMO204918 · piloto maio/2026' },
   { id: 'fiscal', name: 'Provedor fiscal', kind: 'fiscal', status: 'disponivel', lastSync: null, detail: 'Adapter para NF-e/NFC-e, XML e DANFE' },
 ]
 

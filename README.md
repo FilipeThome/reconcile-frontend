@@ -1,26 +1,42 @@
 # Reconcile — frontend
 
-Interface React da reconciliação de marketplace (Mercado Livre + Mercado Pago).
+[Português](README.pt-BR.md)
 
-## Desenvolvimento
+React interface for marketplace reconciliation (Mercado Livre, Shopee, Amazon, and Mercado Pago).
+
+**Author:** Filipe de Brito Thomé
+
+## Languages
+
+The UI ships in Brazilian Portuguese (`pt-BR`, default) and US English (`en-US`). Switch with **PT-BR / US-ENG** in the header. The choice is stored in the browser as `reconcile.locale`. Dates, BRL amounts, and API error messages follow the active locale.
+
+## Development
 
 ```bat
 npm install
 npm run dev
 ```
 
-A UI sobe em `http://localhost:5173` e encaminha `/api` para o backend em `http://localhost:8080`.
+The UI runs at `http://localhost:5173` and proxies `/api` to the backend at `http://localhost:8080`.
 
-Com o backend em `SEED_DEMO=true` e `SEED_LEDGER=true`, o login piloto é `ana.dantas@lojaexemplo.com.br` / `senha123`. O recorte padrão da UI é **maio/2026**, o mesmo período dos pedidos seed.
+With the backend on `SEED_DEMO=true` and `SEED_LEDGER=true`, the pilot login is `ana.dantas@lojaexemplo.com.br` / `senha123`. The default UI range is **May 2026**, the same period as the seeded orders.
+
+```bat
+npm test
+```
 
 ## Docker
 
-Com o backend no ar:
+With the backend already running:
 
 ```bat
 docker compose up --build
 ```
 
-Acesse `http://127.0.0.1:8081`.
+Open `http://127.0.0.1:8081`.
 
-Variáveis públicas de build ficam em `.env.example`. Não coloque segredos em `VITE_*` — elas entram no bundle.
+Public build variables live in `.env.example`. Do not put secrets in `VITE_*`; they are compiled into the bundle.
+
+## Copyright
+
+Copyright (c) 2026 Filipe de Brito Thomé. All rights reserved.

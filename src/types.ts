@@ -67,7 +67,7 @@ export type Settlement = {
   expectedNet: number
   actualNet: number | null
   status: ReconciliationStatus
-  snapshotId: string
+  snapshotId: string | null
 }
 
 export type Payout = {

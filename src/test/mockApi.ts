@@ -110,6 +110,13 @@ export async function mockFetch(input: RequestInfo | URL, init?: RequestInit): P
     if (closingMatch[2] === '/close' && method === 'POST') return empty()
   }
   if (path === '/integrations' && method === 'GET') return json(initialIntegrations)
+  if (path === '/integrations/ml/stock' && method === 'GET') return stockPage(url)
+  const stockItem = path.match(/^\/integrations\/ml\/stock\/([^/]+)$/)
+  if (stockItem && method === 'GET') {
+    const item = stockItems.find((row) => row.id === stockItem[1])
+    return item ? json(item) : json({ code: 'NOT_FOUND', message: 'Anúncio não encontrado' }, 404)
+  }
+  if (stockItem && method === 'PUT') return updateStock(stockItem[1], init?.body)
   if (/^\/integrations\/[^/]+\/backfill$/.test(path) && method === 'POST') {
     return json({ id: 'ml', status: 'done', orders: 0, payments: 0, fees: 0, refunds: 0, invoices: 0 })
   }
@@ -139,4 +146,143 @@ export async function mockFetch(input: RequestInfo | URL, init?: RequestInit): P
   if (exportMatch && method === 'POST') return text(`tipo;arquivo\n${exportMatch[1]};${exportMatch[1]}.csv`)
 
   return json({ code: 'NOT_FOUND', message: `Rota de teste não mapeada: ${method} ${path}` }, 404)
+}
+
+type MockStock = {
+  id: string
+  title: string
+  sku: string | null
+  status: string
+  availableQuantity: number
+  soldQuantity: number
+  permalink: string | null
+  userProductId: string | null
+  editable: boolean
+  stockAvailable?: boolean
+  variations: { id: number; label: string; sku: string | null; availableQuantity: number; userProductId: string | null }[]
+  locations: { type: string; quantity: number; storeId: string | null; networkNodeId: string | null; editable: boolean }[]
+}
+
+function stockRow(partial: Pick<MockStock, 'id' | 'title'> & Partial<MockStock>): MockStock {
+  return {
+    sku: null,
+    status: 'active',
+    availableQuantity: 1,
+    soldQuantity: 0,
+    permalink: null,
+    userProductId: null,
+    editable: true,
+    variations: [],
+    locations: [],
+    ...partial,
+  }
+}
+
+function defaultStock(): MockStock[] {
+  const filler = Array.from({ length: 17 }, (_, index) =>
+    stockRow({
+      id: `MLB10001${String(index).padStart(3, '0')}`,
+      title: index === 16 ? 'Ultimo anuncio' : `Item extra ${index}`,
+      locations: index === 0 ? [{ type: 'other', quantity: 1, storeId: null, networkNodeId: null, editable: false }] : [],
+      editable: index === 0 ? false : true,
+      stockAvailable: index === 0 ? false : true,
+    }),
+  )
+  return [
+    stockRow({
+      id: 'MLB10000001',
+      title: 'Camiseta azul',
+      sku: 'CAM-AZ',
+      availableQuantity: 8,
+      soldQuantity: 2,
+      permalink: 'https://produto.mercadolivre.com.br/MLB10000001',
+      locations: [{ type: 'selling_address', quantity: 8, storeId: null, networkNodeId: null, editable: true }],
+    }),
+    stockRow({
+      id: 'MLB10000002',
+      title: 'Tenis',
+      sku: 'TEN',
+      availableQuantity: 5,
+      variations: [
+        { id: 11, label: '40', sku: 'TEN-40', availableQuantity: 2, userProductId: null },
+        { id: 12, label: '41', sku: 'TEN-41', availableQuantity: 3, userProductId: null },
+      ],
+    }),
+    stockRow({
+      id: 'MLB10000003',
+      title: 'Mochila',
+      sku: 'MOC',
+      availableQuantity: 9,
+      userProductId: 'MLBU10000003',
+      locations: [
+        { type: 'seller_warehouse', quantity: 4, storeId: 'A1', networkNodeId: 'N1', editable: true },
+        { type: 'seller_warehouse', quantity: 5, storeId: 'B2', networkNodeId: 'N2', editable: true },
+      ],
+    }),
+    stockRow({
+      id: 'MLB10000004',
+      title: 'Fone Full',
+      sku: 'FON',
+      availableQuantity: 3,
+      editable: false,
+      locations: [{ type: 'meli_facility', quantity: 3, storeId: null, networkNodeId: null, editable: false }],
+    }),
+    stockRow({ id: 'MLB10000005', title: 'Anuncio encerrado', sku: 'ENC', status: 'closed', editable: false }),
+    stockRow({ id: 'MLB10000006', title: 'Anuncio pausado', sku: 'PAU', status: 'paused' }),
+    stockRow({ id: 'MLB10000007', title: 'Anuncio inativo', sku: 'INA', status: 'inactive' }),
+    ...filler,
+  ]
+}
+
+let stockItems = defaultStock()
+
+export function resetMockStock() {
+  stockItems = defaultStock()
+}
+
+function stockPage(url: URL) {
+  const q = url.searchParams.get('q')?.trim().toLowerCase() ?? ''
+  if (q === 'erro') return json({ code: 'UNPROCESSABLE', message: 'Falha ao consultar o Mercado Livre' }, 422)
+  const status = url.searchParams.get('status')
+  const offset = Number(url.searchParams.get('offset') ?? 0)
+  const limit = Number(url.searchParams.get('limit') ?? 20)
+  const rows = stockItems.filter((item) => {
+    const matchesStatus = !status || item.status === status
+    const matchesQuery = !q || item.id.toLowerCase() === q || item.sku?.toLowerCase() === q || item.title.toLowerCase().includes(q)
+    return matchesStatus && matchesQuery
+  })
+  return json({ total: rows.length, offset, limit, items: rows.slice(offset, offset + limit) })
+}
+
+function updateStock(id: string, raw: BodyInit | null | undefined) {
+  const body = JSON.parse(String(raw ?? '{}')) as {
+    availableQuantity?: number
+    variationId?: number
+    storeId?: string
+    networkNodeId?: string
+  }
+  if (body.availableQuantity === 13) {
+    return json({ code: 'UNPROCESSABLE', message: 'A API do Mercado Livre recusou a atualização' }, 422)
+  }
+  const item = stockItems.find((row) => row.id === id)
+  if (!item) return json({ code: 'NOT_FOUND', message: 'Anúncio não encontrado' }, 404)
+  const quantity = Number(body.availableQuantity)
+  if (body.variationId) {
+    item.variations = item.variations.map((variation) =>
+      variation.id === body.variationId ? { ...variation, availableQuantity: quantity } : variation,
+    )
+  } else if (body.storeId) {
+    item.locations = item.locations.map((location) =>
+      location.storeId === body.storeId &&
+      (body.networkNodeId == null || location.networkNodeId === body.networkNodeId)
+        ? { ...location, quantity }
+        : location,
+    )
+  } else {
+    item.availableQuantity = quantity
+    item.locations = item.locations.map((location) =>
+      location.type === 'selling_address' ? { ...location, quantity } : location,
+    )
+  }
+  return json(item)
 }

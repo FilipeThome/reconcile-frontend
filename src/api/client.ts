@@ -1,4 +1,4 @@
-import { t } from '../i18n/locale'
+import { getLocale, t } from '../i18n/locale'
 
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
 const SESSION_KEY = 'reconcile.session'
@@ -65,6 +65,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   if (!headers.has('Content-Type') && options.body) {
     headers.set('Content-Type', 'application/json')
   }
+  headers.set('Accept-Language', getLocale())
   if (!isLogin && session?.token) headers.set('Authorization', `Bearer ${session.token}`)
   if (!isLogin && session?.tenantId) headers.set('X-Tenant-Id', session.tenantId)
 

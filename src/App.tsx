@@ -15,6 +15,7 @@ import { DiscrepancyDetail } from './pages/DiscrepancyDetail'
 import { Fees } from './pages/Fees'
 import { Fiscal } from './pages/Fiscal'
 import { Integrations } from './pages/Integrations'
+import { MercadoLivreStock } from './pages/MercadoLivreStock'
 import { Login } from './pages/Login'
 import { OrderDetail } from './pages/OrderDetail'
 import { Orders } from './pages/Orders'
@@ -55,6 +56,7 @@ export default function App() {
                 <Route path="/fechamentos/:id" element={<ClosingDetail />} />
                 <Route path="/relatorios" element={<Reports />} />
                 <Route path="/integracoes" element={<Integrations />} />
+                <Route path="/integracoes/mercado-livre/estoque" element={<MercadoLivreStock />} />
                 <Route path="/configuracoes" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
