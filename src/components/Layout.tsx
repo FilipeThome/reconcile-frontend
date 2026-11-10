@@ -22,6 +22,7 @@ import { useAuth } from '../context/AuthContext'
 import { LanguageSwitch, useLocale } from '../context/LocaleContext'
 import { displayRole } from '../lib/format'
 import type { MessageKey } from '../i18n/locale'
+import { SaleNotifier } from './SaleNotifier'
 
 const groups: { label: MessageKey; items: { to: string; label: MessageKey; icon: typeof LayoutDashboard; end?: boolean }[] }[] = [
   {
@@ -73,6 +74,7 @@ export function Layout() {
 
   return (
     <div className="app-shell">
+      <SaleNotifier />
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-mark">
