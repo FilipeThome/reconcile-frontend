@@ -4,6 +4,7 @@ export const OAUTH_PROVIDERS = {
   ml: 'Mercado Livre',
   shopee: 'Shopee',
   amazon: 'Amazon',
+  olx: 'OLX',
 } as const
 
 export type OauthProviderId = keyof typeof OAUTH_PROVIDERS
@@ -24,6 +25,7 @@ const OAUTH_AUTHORIZE_HOSTS = new Set([
   'partner.shopeemobile.com',
   'sellercentral.amazon.com',
   'sellercentral.amazon.com.br',
+  'auth.olx.com.br',
 ])
 
 export function isOauthProviderId(value: string | null | undefined): value is OauthProviderId {

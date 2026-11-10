@@ -22,6 +22,7 @@ import {
   users,
 } from './fixtures'
 import { testSession } from './session'
+import type { SaleAlert } from '../types'
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -110,6 +111,10 @@ export async function mockFetch(input: RequestInfo | URL, init?: RequestInit): P
     if (closingMatch[2] === '/close' && method === 'POST') return empty()
   }
   if (path === '/integrations' && method === 'GET') return json(initialIntegrations)
+  if (path === '/integrations/sales' && method === 'GET') {
+    return salesFailing ? json({ code: 'ERROR', message: 'Falha ao consultar vendas' }, 500) : json(saleAlerts)
+  }
+  if (path === '/integrations/sales' && method === 'POST') return createSale(init?.body)
   if (path === '/integrations/ml/stock' && method === 'GET') return stockPage(url)
   const stockItem = path.match(/^\/integrations\/ml\/stock\/([^/]+)$/)
   if (stockItem && method === 'GET') {
@@ -146,6 +151,77 @@ export async function mockFetch(input: RequestInfo | URL, init?: RequestInit): P
   if (exportMatch && method === 'POST') return text(`tipo;arquivo\n${exportMatch[1]};${exportMatch[1]}.csv`)
 
   return json({ code: 'NOT_FOUND', message: `Rota de teste não mapeada: ${method} ${path}` }, 404)
+}
+
+function defaultSales(): SaleAlert[] {
+  return [
+    {
+      id: 'sale-2',
+      provider: 'ml',
+      orderId: 'ML-9002',
+      sku: 'CAM-AZ',
+      title: 'Camiseta azul',
+      quantity: 2,
+      status: 'vendido',
+      occurredAt: '2026-06-18T12:30:00',
+      createdAt: '2026-06-18T12:30:05',
+      targets: [
+        { provider: 'shopee', itemId: 'SHP-1', variationId: null, title: 'Camiseta azul Shopee', before: 8, after: 6, ok: true, message: null },
+        { provider: 'olx', itemId: 'OLX-1', variationId: null, title: 'Camiseta azul OLX', before: null, after: null, ok: false, message: 'Anúncio pausado na OLX' },
+        { provider: 'amazon', itemId: 'AMZ-1', variationId: 'V1', title: 'Camiseta azul Amazon', before: null, after: null, ok: false, message: null },
+        { provider: 'loja', itemId: 'LJ-1', variationId: null, title: 'Camiseta azul loja', before: null, after: 3, ok: true, message: null },
+      ],
+    },
+    {
+      id: 'sale-1',
+      provider: 'shopee',
+      orderId: 'SHP-7001',
+      sku: 'TEN-40',
+      title: 'Tenis 40',
+      quantity: 1,
+      status: 'cancelado',
+      occurredAt: '2026-06-17T09:10:00',
+      createdAt: '2026-06-17T09:10:04',
+      targets: [],
+    },
+  ]
+}
+
+let saleAlerts = defaultSales()
+let salesFailing = false
+
+export function resetMockSales(rows: SaleAlert[] = defaultSales()) {
+  saleAlerts = rows
+  salesFailing = false
+}
+
+export function failMockSales(value: boolean) {
+  salesFailing = value
+}
+
+export function pushMockSale(partial: Pick<SaleAlert, 'id' | 'sku'> & Partial<SaleAlert>) {
+  const alert: SaleAlert = {
+    provider: 'manual',
+    orderId: partial.id,
+    title: `Produto ${partial.sku}`,
+    quantity: 1,
+    status: 'vendido',
+    occurredAt: '2026-06-18T13:00:00',
+    createdAt: '2026-06-18T13:00:00',
+    targets: [],
+    ...partial,
+  }
+  saleAlerts = [alert, ...saleAlerts]
+  return alert
+}
+
+function createSale(raw: BodyInit | null | undefined) {
+  const body = JSON.parse(String(raw ?? '{}')) as { sku?: string; quantity?: number; reference?: string }
+  if (body.sku === 'ERRO') return json({ code: 'UNPROCESSABLE', message: 'SKU sem anúncio vinculado' }, 422)
+  const id = `sale-${saleAlerts.length + 1}`
+  return json([
+    pushMockSale({ id, sku: String(body.sku), orderId: body.reference ?? id, quantity: Number(body.quantity) }),
+  ])
 }
 
 type MockStock = {

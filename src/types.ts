@@ -191,6 +191,32 @@ export type Integration = {
   oauth?: boolean
 }
 
+export type SaleTarget = {
+  provider: string
+  itemId: string
+  variationId: string | null
+  title: string
+  before: number | null
+  after: number | null
+  ok: boolean
+  message: string | null
+  /** The sale was cancelled and this listing got its units back. */
+  restored?: boolean
+}
+
+export type SaleAlert = {
+  id: string
+  provider: string
+  orderId: string
+  sku: string
+  title: string
+  quantity: number
+  status: 'vendido' | 'cancelado'
+  occurredAt: string
+  createdAt: string
+  targets: SaleTarget[]
+}
+
 export type ReconciliationRule = {
   id: string
   name: string

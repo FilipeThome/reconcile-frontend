@@ -24,6 +24,7 @@ import { Payouts } from './pages/Payouts'
 import { Refunds } from './pages/Refunds'
 import { Reports } from './pages/Reports'
 import { Rules } from './pages/Rules'
+import { SalesStockSync } from './pages/SalesStockSync'
 import { Settings } from './pages/Settings'
 import { Settlements } from './pages/Settlements'
 
@@ -57,6 +58,7 @@ export default function App() {
                 <Route path="/relatorios" element={<Reports />} />
                 <Route path="/integracoes" element={<Integrations />} />
                 <Route path="/integracoes/mercado-livre/estoque" element={<MercadoLivreStock />} />
+                <Route path="/integracoes/vendas" element={<SalesStockSync />} />
                 <Route path="/configuracoes" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>

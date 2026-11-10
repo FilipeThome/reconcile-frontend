@@ -28,7 +28,11 @@ export function Integrations() {
       <PageHeader
         title={t('int.title')}
         subtitle={t('int.subtitle')}
-      />
+      >
+        <Link className="btn" to="/integracoes/vendas">
+          {t('sales.open')}
+        </Link>
+      </PageHeader>
       <div className="integration-grid">
         {integrations.map((item) => (
           <article className="integration-card" key={item.id}>

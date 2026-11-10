@@ -323,7 +323,7 @@ tr.clickable:hover { background: #f8fafc; }
   font-size: 11.5px;
   font-weight: 700;
 }
-.badge.success, .badge.reconciliado, .badge.aprovado, .badge.pago, .badge.autorizada, .badge.ativa, .badge.concluido, .badge.resolvida, .badge.closed { background: var(--success-soft); color: var(--success); }
+.badge.success, .badge.reconciliado, .badge.aprovado, .badge.pago, .badge.vendido, .badge.autorizada, .badge.ativa, .badge.concluido, .badge.resolvida, .badge.closed { background: var(--success-soft); color: var(--success); }
 .badge.warning, .badge.pendente_liquidacao, .badge.pendente_dados, .badge.em_analise, .badge.previsto, .badge.pendente, .badge.reconciliado_alerta { background: var(--warning-soft); color: var(--warning); }
 .badge.danger, .badge.divergente, .badge.aberta, .badge.rejeitada, .badge.atrasado, .badge.erro, .badge.chargeback, .badge.estornado, .badge.cancelado { background: var(--danger-soft); color: var(--danger); }
 .badge.neutral, .badge.revisao_manual, .badge.ignorada, .badge.ignorado, .badge.fechado, .badge.disponivel, .badge.open, .badge.nao_obrigatoria { background: #eef2f6; color: #475569; }

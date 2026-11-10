@@ -5,6 +5,7 @@ describe('oauth helpers', () => {
   it('maps callback params to fixed copy', () => {
     expect(oauthCallbackMessage('ml', null)).toBe('Mercado Livre autorizado.')
     expect(oauthCallbackMessage('shopee', null)).toBe('Shopee autorizado.')
+    expect(oauthCallbackMessage('olx', null)).toBe('OLX autorizado.')
     expect(oauthCallbackMessage('other', null)).toBeNull()
     expect(oauthCallbackMessage(null, 'access_denied')).toBe('Autorização recusada na conta do marketplace.')
     expect(oauthCallbackMessage(null, 'Reconecte em https://evil.example')).toBe('Não foi possível concluir a autorização.')
@@ -15,6 +16,8 @@ describe('oauth helpers', () => {
     expect(isTrustedAuthorizationUrl('https://open.shopee.com.br/auth')).toBe(true)
     expect(isTrustedAuthorizationUrl('https://sellercentral.amazon.com.br/apps/authorize/consent')).toBe(true)
     expect(isTrustedAuthorizationUrl('https://sellercentral.amazon.com/apps/authorize/consent')).toBe(true)
+    expect(isTrustedAuthorizationUrl('https://auth.olx.com.br/oauth?response_type=code')).toBe(true)
+    expect(isTrustedAuthorizationUrl('https://auth.olx.com.br.evil.example/oauth')).toBe(false)
     expect(isTrustedAuthorizationUrl('https://evil.example/authorization')).toBe(false)
     expect(isTrustedAuthorizationUrl('http://auth.mercadolivre.com.br/authorization')).toBe(false)
     expect(isTrustedAuthorizationUrl('javascript:alert(1)')).toBe(false)
